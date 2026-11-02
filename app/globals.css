@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* ─── TOKENS DE DISEÑO ────────────────────────────────────────────────────────
+   Fuente de verdad: /design/brand.md
+   Regla de marca: el FONDO de la web es siempre blanco; el color lo aportan
+   los componentes (botones, tarjetas, bloques, logo, ilustraciones).
+   Arquitectura en 3 capas: primitivo → semántico → componente.
+   ─────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* ── 1. Primitivos ─────────────────────────────────────────────────────── */
+  /* Valores medidos del tablero de marca (design/images: "Diseño sin título.svg") */
+  --color-luca-gold:       #f1a200; /* amarillo LUCA — EL color de marca */
+  --color-luca-gold-deep:  #d98f00; /* derivado del amarillo — hover/pressed */
+  --color-luca-cream:      #e8e1d9; /* crema de las piezas de marca */
+  --color-luca-white:      #ffffff; /* fondo global */
+  --color-luca-black:      #1a1a1a; /* negro de marca — texto y logo */
+  --color-luca-ink-soft:   #5f4b44; /* texto secundario (derivado) — 8:1 sobre blanco */
+  --color-luca-line:       #d9cfc4; /* crema oscurecido — bordes */
+  --color-luca-red:        #a22e2f; /* acento SOLO para componentes (nunca marca) */
+  --color-luca-red-deep:   #852526; /* derivado — hover del acento */
+  /* Solo ilustración — pendiente de confirmar uso en UI */
+  --color-luca-green:      #0b613a;
+  --color-luca-brown:      #563933;
+
+  /* ── 2. Semánticos ─────────────────────────────────────────────────────── */
+  /* El amarillo tiene 2:1 sobre blanco → solo como RELLENO, nunca como texto
+     sobre blanco. Títulos y logo sobre blanco van en negro. */
+  --color-bg:              var(--color-luca-white);   /* fondo de página */
+  --color-fg:              var(--color-luca-black);   /* texto, títulos, logo */
+  --color-fg-muted:        var(--color-luca-ink-soft);
+  --color-primary:         var(--color-luca-gold);    /* botones, hero, bloques */
+  --color-primary-hover:   var(--color-luca-gold-deep);
+  --color-on-primary:      var(--color-luca-black);   /* texto sobre amarillo (8,5:1) */
+  /* Acento rojo: solo en componentes (badges, precios, bloques secundarios).
+     Nunca en logo, hero ni CTA principal. 7:1 sobre blanco; crema encima 5,4:1. */
+  --color-accent:          var(--color-luca-red);
+  --color-accent-hover:    var(--color-luca-red-deep);
+  --color-on-accent:       var(--color-luca-cream);
+  --color-surface:         var(--color-luca-cream);   /* tarjetas, bloques */
+  --color-on-surface:      var(--color-luca-black);
+  --color-border:          var(--color-luca-line);
+  --color-ring:            var(--color-luca-black);   /* foco visible (el amarillo no llega a 3:1) */
+
+  /* ── Tipografías (definidas en layout.tsx con next/font) ───────────────── */
+  --font-display: var(--font-league-spartan), system-ui, sans-serif;
+  --font-body:    var(--font-dm-sans), system-ui, sans-serif;
+
+  /* ── Radios — formas orgánicas, dos niveles de jerarquía ───────────────── */
+  --radius-sm:   0.5rem;   /* inputs, chips */
+  --radius-md:   1rem;     /* tarjetas pequeñas */
+  --radius-lg:   2rem;     /* tarjetas de producto */
+  --radius-xl:   3rem;     /* bloques de color de sección */
+  --radius-pill: 9999px;   /* botones */
+
+  /* ── Sombras ─────────────────────────────── */
+  --shadow-soft: 0 12px 32px -12px rgb(26 26 26 / 0.18);
+  --shadow-card: 0 4px 16px -6px rgb(26 26 26 / 0.12);
+
+  /* ── Animaciones ─────────────────────────── */
+  /* Franja de frases: desplaza la mitad del ancho (la lista va duplicada). */
+  --animate-marquee: marquee 30s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  /* Sello "Reserva tu mesa" del hero: giro muy lento (keyframe `spin` de Tailwind). */
+  --animate-spin-slow: spin 28s linear infinite;
+  /* Dibujos de la franja: balanceo suave de lado a lado. */
+  --animate-sway: sway 2.8s ease-in-out infinite;
+  @keyframes sway {
+    0%, 100% { transform: rotate(-10deg); }
+    50%      { transform: rotate(10deg); }
+  }
+}
+
+/* Intro de entrada (IntroSplash): si el script de layout.tsx detecta "menos
+   movimiento", el telón no llega a pintarse. */
+html[data-intro="skip"] .intro-splash { display: none; }
+
+/* ─── BASE ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+/* Respeta prefers-reduced-motion globalmente */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Foco visible accesible */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 3px;
+}
+
+/* Filas deslizables (filtros, índice de la carta) sin barra de scroll visible */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Ticket de feria: esquinas recortadas en cuarto de círculo (máscara con 4 degradados).
+   El tamaño del mordisco se ajusta con --notch. */
+@utility ticket-notch {
+  --notch: 0.9rem;
+  mask:
+    radial-gradient(circle at top left, transparent var(--notch), black calc(var(--notch) + 0.5px)) top left,
+    radial-gradient(circle at top right, transparent var(--notch), black calc(var(--notch) + 0.5px)) top right,
+    radial-gradient(circle at bottom left, transparent var(--notch), black calc(var(--notch) + 0.5px)) bottom left,
+    radial-gradient(circle at bottom right, transparent var(--notch), black calc(var(--notch) + 0.5px)) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
+}
+
+/* Comanda (ticket de pedido): bordes superior e inferior perforados, como papel
+   de rollo arrancado. Cada capa de la máscara "muerde" un semicírculo por tramo.
+   El tamaño del mordisco se ajusta con --bite; la separación, con --gap. */
+@utility ticket-perforated {
+  --bite: 0.35rem;
+  --gap: 0.9rem;
+  mask:
+    radial-gradient(circle at 50% 0, transparent var(--bite), black calc(var(--bite) + 0.5px)) top / var(--gap) 51% repeat-x,
+    radial-gradient(circle at 50% 100%, transparent var(--bite), black calc(var(--bite) + 0.5px)) bottom / var(--gap) 51% repeat-x;
+}
