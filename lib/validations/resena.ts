@@ -4,6 +4,7 @@ import {
   honeypot,
   longText,
   name,
+  privacy,
   turnstileToken,
 } from "@/lib/validations/common";
 
@@ -29,6 +30,7 @@ export const resenaSchema = z.object({
   photos: z.array(photoDataUrl).max(MAX_PHOTOS, `Máximo ${MAX_PHOTOS} fotos`),
   // Sin este permiso no se puede publicar nada (nombre, texto ni fotos).
   consent: z.boolean().refine((v) => v, "Necesitamos tu permiso para publicarla"),
+  privacy,
   website: honeypot,
   turnstileToken,
 });

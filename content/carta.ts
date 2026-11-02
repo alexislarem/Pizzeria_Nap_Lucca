@@ -10,8 +10,8 @@ export const cartaIntro = {
   title: menuSection.title,
   subtitle: menuSection.subtitle,
   photo: {
-    src: "/images/menu/margherita-estudio.webp",
-    alt: "Pizza Margherita con mozzarella y hojas de albahaca sobre una mesa de mármol blanco",
+    src: "/images/gallery/pizza-cenital.webp",
+    alt: "Pizza de LUCA vista desde arriba, con borde moteado por el horno, parmesano y albahaca",
   },
   // Dibujos que flotan alrededor del título y se sacuden al tocarlos.
   doodles: ["albahaca", "tomates", "pizzaAbierta"] satisfies DoodleName[],

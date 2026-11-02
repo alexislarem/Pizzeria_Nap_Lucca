@@ -102,6 +102,7 @@ site.config.ts              → Marca, navegación, contacto, horarios, redes
 | `/galeria` | `app/galeria/page.tsx` | GaleriaIntro → GaleriaGrid (filtros + masonry + Lightbox) → HomeReserve | `content/galeria.ts` |
 | `/contacto` | `app/contacto/page.tsx` | ContactoHero (datos + fotos) → ContactoMap (Google Maps incrustado) → ContactoFormSection | `content/contacto.ts` |
 | `/reservar` | `app/reservar/page.tsx` | ReservarHero (formulario + alternativas) | `content/contacto.ts` |
+| `/aviso-legal`, `/privacidad`, `/cookies` | `app/<slug>/page.tsx` | LegalPage (texto + accesos entre ellas) | `content/legal.ts` |
 | `/resenas` | `app/resenas/page.tsx` | ResenasIntro → ResenasWall (barra de comandas: reseñas reales que suben en columnas y se aceleran con el scroll; ReviewCard + InstagramCard) → ResenaFormSection (PeekRating, fotos, SpringCheck, Turnstile, SlideCommit → email para revisar). Sustituye a Foodtrucks (`/foodtrucks` redirige con 307) | `content/resenas.ts` |
 
 ### Patrones a seguir
@@ -186,8 +187,8 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | # | Pendiente | Estado |
 |---|-----------|--------|
 | 1 | Claves reales en Vercel: Resend (+ dominio verificado), Turnstile, Upstash | ⏳ Usuario |
-| 2 | Definir dominio (`site.config.url`, `NEXT_PUBLIC_URL`, remitente de Resend) | ⏳ Pendiente |
-| 3 | Confirmar horarios de apertura (y limitar la hora de reserva a ellos) | ⏳ Pendiente |
+| 2 | Dominio lucapizzerianapoletana.es (site.config.url). Falta: comprarlo/conectarlo en Vercel y verificarlo en Resend | ⏳ Usuario |
+| 3 | Horarios (site.config → hours) y validación de reservas por día/hora | ✅ Hecho |
 | 4 | Reseñas: 7 reales de Google cargadas (`design/resenas.md`). Faltan: estrellas de B.I.N, final del texto de Sonia, reseñas de Instagram y automatizar la publicación tras revisar por email | ⏳ Usuario |
 | 5 | Confirmar copy del Hero y textos marcados `TODO` en `content/*.ts` (Proceso, Obra, pies de foto, textos de formularios) | ⏳ Pendiente |
 | 6 | Enlace de Google Maps del local (`contact.mapUrl`, por cid) | ✅ Hecho |
@@ -195,11 +196,12 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | 15 | Confirmar pizza destacada de la Carta (hoy La Divina, `cartaFeatured`) | ⏳ Usuario |
 | 8 | Comparar Inicio, Nosotros, Carta y Galería con Figma cuando haya cuota | ⏳ Pendiente |
 | 9 | Revisar `alt` de fotos con personas (escritos sin saber quién es cada uno) | ⏳ Pendiente |
-| 10 | Imagen OG 1200×630 (Fase 6) | ⏳ Pendiente |
-| 11 | Derechos de las fotos de `design/images/cosmos` (moodboard, no son de LUCA) usadas en Inicio, Carta y Reserva | ⏳ Usuario |
+| 10 | Imagen OG generada (app/opengraph-image.tsx), iconos, sitemap, robots, JSON-LD | ✅ Hecho |
+| 11 | Fotos del moodboard retiradas de la web y sustituidas por fotos propias (no reintroducir `public/images/inspiracion`) | ✅ Hecho |
 | 12 | Confirmar copy nuevo del Inicio marcado `TODO` (Hecha en familia, Te guardamos la mesa, Así se ve LUCA…) | ⏳ Usuario |
 | 13 | La foto de la señora (`gallery/margherita-en-mano.webp`) se retiró de la web por petición del usuario: no volver a usarla | ✅ Hecho |
-| 14 | Intro del Inicio recreada desde el SVG (Figma sin cuota): comparar con la animación de Figma | ⏳ Pendiente |
+| 14 | Intro del Inicio: telón amarillo que gotea al subir (CurtainDrips.tsx; el queso se descartó). Comparar con Figma | ⏳ Pendiente |
+| 16 | Titular en aviso legal: Alexis Nascon (desarrollador, a petición del usuario). Confirmar si debe ser el dueño del negocio + revisión por asesor | ⏳ Usuario |
 
 Hecho: `/design/*.md`, fotos reales, logo SVG, tipografía (League Spartan Black),
 modelo de reservas (formulario simple → email).

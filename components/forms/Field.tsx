@@ -28,23 +28,32 @@ type FieldProps = {
 };
 
 /** Etiqueta + control + ayuda/error. El error se lee por lector de pantalla gracias a aria-describedby. */
-export function Field({ id, label, error, hint, optional, className, children }: FieldProps) {
-  const describedBy = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
+export function Field({
+  id,
+  label,
+  error,
+  hint,
+  optional,
+  className,
+  children,
+}: FieldProps) {
+  const describedBy =
+    [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className={className}>
       <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
         {label}
-        {optional && <span className="font-normal text-fg-muted"> (opcional)</span>}
+        {optional && <span className="text-fg-muted font-normal"> (opcional)</span>}
       </label>
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": describedBy })}
       {hint && !error && (
-        <p id={`${id}-hint`} className="mt-1.5 text-sm text-fg-muted">
+        <p id={`${id}-hint`} className="text-fg-muted mt-1.5 text-sm">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-sm font-semibold text-accent">
+        <p id={`${id}-error`} className="text-accent mt-1.5 text-sm font-semibold">
           {error}
         </p>
       )}

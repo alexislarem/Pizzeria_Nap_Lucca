@@ -215,10 +215,10 @@ export const homeProcess = {
       doodle: "pizzaAbierta",
     },
   ] satisfies ProcessStep[],
-  // Recorte con fondo transparente (design/images/cosmos/PIZZA DISEÑO.svg).
+  // Recorte circular de una pizza de LUCA (design/images/web/img_6159), fondo transparente.
   pizza: {
-    src: "/images/home/pizza-giratoria.webp",
-    alt: "Pizza Margherita con mozzarella y hojas de albahaca, vista desde arriba",
+    src: "/images/home/pizza-giratoria-luca.webp",
+    alt: "Pizza de LUCA vista desde arriba, con borde moteado por el horno, parmesano y albahaca",
   },
   // Texto que gira alrededor de la pizza (expresiones y datos de marca).
   ring: "Pizza napoletana · Masa de 72 horas · Hecha en familia · Buon appetito · ",
@@ -233,8 +233,8 @@ export const homeMenu = {
   cta: { label: "Ver la carta", href: "/carta" },
   // Foto de cabecera que se abre a pantalla completa con el scroll (ScrollExpand).
   cover: {
-    src: "/images/menu/pizza-embutido-burrata.webp",
-    alt: "Pizza napolitana vista desde arriba con embutido, burrata y albahaca sobre una superficie de metal oxidado",
+    src: "/images/proceso/horno-pizza.webp",
+    alt: "Pizza napolitana cociéndose en el horno de LUCA, con la llama al fondo",
   },
 } as const;
 
@@ -242,14 +242,14 @@ export type BrandItem = Photo & { title: string; subtitle: string };
 
 /**
  * Marca: carrusel circular con los carteles de la identidad visual
- * (design/images/*.svg → /images/marca) alternados con fotos de inspiración.
+ * (design/images/*.svg → /images/marca). Sin fotos del moodboard: no son de LUCA.
  * TODO: sustituir o combinar con el vídeo de marca (Figma + Framer) cuando esté listo.
  */
 export const homeBrand = {
   eyebrow: "Mamma mia",
   // TODO: confirmar copy con el cliente.
   title: "Así se ve LUCA",
-  subtitle: "Nuestros carteles y la Italia que nos inspira.",
+  subtitle: "Nuestros carteles, dibujados para LUCA.",
   items: [
     {
       src: "/images/marca/logo-amarillo.webp",
@@ -258,22 +258,10 @@ export const homeBrand = {
       subtitle: "Logotipo",
     },
     {
-      src: "/images/inspiracion/porcion-queso.webp",
-      alt: "Mano levantando una porción de pizza con el queso fundido estirándose",
-      title: "Che pizza",
-      subtitle: "Inspiración",
-    },
-    {
       src: "/images/marca/albahaca.webp",
       alt: "Ilustración de un ramo de albahaca sobre fondo verde",
       title: "Basilico",
       subtitle: "Ramo de albahaca",
-    },
-    {
-      src: "/images/inspiracion/pizza-cherry.webp",
-      alt: "Pizza napolitana con tomates cherry asados y mozzarella",
-      title: "Buon appetito",
-      subtitle: "Inspiración",
     },
     {
       src: "/images/marca/tomates.webp",
@@ -282,22 +270,10 @@ export const homeBrand = {
       subtitle: "Mata de tomates",
     },
     {
-      src: "/images/inspiracion/ingredientes.webp",
-      alt: "Mozzarella, albahaca y salami cayendo sobre una pizza",
-      title: "Mamma mia",
-      subtitle: "Inspiración",
-    },
-    {
       src: "/images/marca/ravioli.webp",
       alt: "Ilustración de tres raviolis amarillos sobre fondo crema",
       title: "Ravioli",
       subtitle: "Raviolis",
-    },
-    {
-      src: "/images/inspiracion/pizza-aperitivo.webp",
-      alt: "Pizza con jamón compartida en una mesa con un aperitivo",
-      title: "Ciao bella",
-      subtitle: "Inspiración",
     },
     {
       src: "/images/marca/mano-perfetto.webp",
@@ -306,22 +282,10 @@ export const homeBrand = {
       subtitle: "Mano perfetto",
     },
     {
-      src: "/images/inspiracion/pizza-bresaola.webp",
-      alt: "Pizza con rúcula y bresaola sobre una mesa de madera",
-      title: "Grazie mille",
-      subtitle: "Inspiración",
-    },
-    {
       src: "/images/marca/pizza-abierta.webp",
       alt: "Ilustración de una pizza con porciones separadas sobre fondo verde",
       title: "Pizza",
       subtitle: "Pizza abierta",
-    },
-    {
-      src: "/images/inspiracion/porcion.webp",
-      alt: "Mano cogiendo una porción de pizza con salami",
-      title: "Tutto passa",
-      subtitle: "Inspiración",
     },
     {
       src: "/images/marca/mano-pizza.webp",
@@ -330,22 +294,10 @@ export const homeBrand = {
       subtitle: "Mano con pizza",
     },
     {
-      src: "/images/inspiracion/pizza-vino.webp",
-      alt: "Pizza blanca sobre tabla de madera junto a una botella y una copa de vino",
-      title: "Buonasera",
-      subtitle: "Inspiración",
-    },
-    {
       src: "/images/marca/molino.webp",
       alt: "Ilustración de un molino con aspas de porciones de pizza",
       title: "Mulino",
       subtitle: "Molino de pizza",
-    },
-    {
-      src: "/images/inspiracion/margherita-terrazo.webp",
-      alt: "Pizza Margherita con albahaca sobre una mesa de terrazo",
-      title: "Margherita",
-      subtitle: "Inspiración",
     },
     {
       src: "/images/marca/coctel.webp",
@@ -370,7 +322,7 @@ export const homeReserve = {
   subtitle: "Llámanos, escríbenos o resérvala en un minuto.",
   cta: { label: "Reservar mesa", href: "/reservar" },
   photo: {
-    src: "/images/home/mesa-margherita.webp",
-    alt: "Pizza Margherita servida en una mesa de restaurante junto a un vaso de agua",
+    src: "/images/menu/margherita.webp",
+    alt: "Pizza Margherita de LUCA con tomate, mozzarella y albahaca sobre la mesa del local",
   },
 } as const;

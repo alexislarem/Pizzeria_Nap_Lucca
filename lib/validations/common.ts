@@ -20,10 +20,13 @@ export const name = line(80).pipe(z.string().min(2, "Escribe tu nombre"));
 export const email = line(120).pipe(z.string().email("Revisa el email"));
 
 /** Teléfono español o internacional: dígitos, espacios, guiones y un "+" inicial. */
-export const phone = line(20).pipe(z.string().regex(/^\+?[\d\s-]{9,19}$/, "Revisa el teléfono"));
+export const phone = line(20).pipe(
+  z.string().regex(/^\+?[\d\s-]{9,19}$/, "Revisa el teléfono")
+);
 
 /** Texto libre de varias líneas (mensaje, comentarios). */
-export const longText = (max: number) => z.string().max(max, `Máximo ${max} caracteres`).transform(clean);
+export const longText = (max: number) =>
+  z.string().max(max, `Máximo ${max} caracteres`).transform(clean);
 
 /**
  * Campo trampa (honeypot): invisible para personas; si llega relleno, es un bot.
@@ -33,3 +36,8 @@ export const honeypot = z.string().optional();
 
 /** Token de Cloudflare Turnstile (la casilla "no soy un robot"). */
 export const turnstileToken = z.string().min(1, "Confirma que no eres un robot");
+
+/** Casilla "He leído y acepto la política de privacidad" (obligatoria en todos los formularios). */
+export const privacy = z
+  .boolean()
+  .refine((v) => v, "Necesitamos que aceptes la política de privacidad");

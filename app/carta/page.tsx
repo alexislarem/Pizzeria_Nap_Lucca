@@ -19,7 +19,12 @@ export default function CartaPage() {
       <CartaIntro />
       <CartaNav />
       {menu.map((category, i) => (
-        <CartaCategory key={category.id} category={category} photo={cartaPhotos[category.id]} reversed={i % 2 === 1} />
+        <CartaCategory
+          key={category.id}
+          category={category}
+          photo={cartaPhotos[category.id]}
+          reversed={i % 2 === 1}
+        />
       ))}
       <HomeReserve />
     </>

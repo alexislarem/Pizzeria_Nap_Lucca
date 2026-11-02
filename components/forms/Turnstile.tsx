@@ -71,8 +71,13 @@ export function Turnstile({ onToken, resetKey }: TurnstileProps) {
     }
   }, [resetKey]);
 
+  // Sin clave: aviso solo para quien desarrolla; el público no ve nada.
   if (!SITE_KEY) {
-    return <p className="text-sm text-accent">TODO: falta NEXT_PUBLIC_TURNSTILE_SITE_KEY en .env.local</p>;
+    return process.env.NODE_ENV === "development" ? (
+      <p className="text-accent text-sm">
+        TODO: falta NEXT_PUBLIC_TURNSTILE_SITE_KEY en .env.local
+      </p>
+    ) : null;
   }
 
   return (

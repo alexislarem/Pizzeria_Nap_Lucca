@@ -16,11 +16,22 @@ export function FormSuccess({ title, text, againLabel, onAgain }: FormSuccessPro
   useEffect(() => ref.current?.focus(), []);
 
   return (
-    <div ref={ref} tabIndex={-1} role="status" className="rounded-lg bg-primary p-8 text-on-primary md:p-10">
+    <div
+      ref={ref}
+      tabIndex={-1}
+      role="status"
+      className="bg-primary text-on-primary rounded-lg p-8 md:p-10"
+    >
       <CircleCheck aria-hidden size={40} />
-      <p className="mt-4 font-display text-3xl font-black uppercase leading-none md:text-4xl">{title}</p>
+      <p className="font-display mt-4 text-3xl leading-none font-black uppercase md:text-4xl">
+        {title}
+      </p>
       <p className="mt-3 text-lg">{text}</p>
-      <button type="button" onClick={onAgain} className="mt-6 font-semibold underline underline-offset-4">
+      <button
+        type="button"
+        onClick={onAgain}
+        className="mt-6 font-semibold underline underline-offset-4"
+      >
         {againLabel}
       </button>
     </div>
@@ -31,7 +42,10 @@ export function FormSuccess({ title, text, againLabel, onAgain }: FormSuccessPro
 export function FormError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-sm bg-accent px-4 py-3 text-sm font-semibold text-on-accent">
+    <p
+      role="alert"
+      className="bg-accent text-on-accent rounded-sm px-4 py-3 text-sm font-semibold"
+    >
       {message}
     </p>
   );

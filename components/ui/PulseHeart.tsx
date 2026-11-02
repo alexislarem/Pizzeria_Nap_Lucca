@@ -128,20 +128,23 @@ export function PulseHeart({ id, count = 0, label }: PulseHeartProps) {
             />
           </motion.span>
         </span>
-        <span className="relative h-5 min-w-4 overflow-hidden text-sm font-semibold tabular-nums">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={total}
-              className="block"
-              initial={{ y: liked ? 14 : -14, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: liked ? -14 : 14, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            >
-              {total}
-            </motion.span>
-          </AnimatePresence>
-        </span>
+        {/* Con 0 no se enseña número: un "0" junto al corazón queda triste. */}
+        {total > 0 && (
+          <span className="relative h-5 min-w-4 overflow-hidden text-sm font-semibold tabular-nums">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={total}
+                className="block"
+                initial={{ y: liked ? 14 : -14, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: liked ? -14 : 14, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
+                {total}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+        )}
       </button>
     </MotionConfig>
   );

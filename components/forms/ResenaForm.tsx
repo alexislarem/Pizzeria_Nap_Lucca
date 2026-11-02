@@ -4,6 +4,7 @@ import { Controller } from "react-hook-form";
 import { Field, inputClass } from "@/components/forms/Field";
 import { FormError, FormSuccess } from "@/components/forms/FormFeedback";
 import { PhotoPicker } from "@/components/forms/PhotoPicker";
+import { PrivacyCheck } from "@/components/forms/PrivacyCheck";
 import { Turnstile } from "@/components/forms/Turnstile";
 import { useApiForm } from "@/components/forms/useApiForm";
 import { PeekRating } from "@/components/ui/PeekRating";
@@ -26,6 +27,7 @@ export function ResenaForm() {
       message: "",
       photos: [],
       consent: false,
+      privacy: false,
       website: "",
       turnstileToken: "",
     });
@@ -141,6 +143,14 @@ export function ResenaForm() {
         label={copy.consent}
         error={errors.consent?.message}
         {...register("consent")}
+      />
+
+      <PrivacyCheck
+        id="rs-privacy"
+        className="sm:col-span-2"
+        checked={watch("privacy")}
+        error={errors.privacy?.message}
+        registration={register("privacy")}
       />
 
       {/* Honeypot: fuera de la vista y del teclado; solo un bot lo rellena. */}

@@ -4,6 +4,8 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { introSkipScript } from "@/components/sections/home/intro-script";
 import { siteConfig } from "@/site.config";
+import { siteUrl } from "@/lib/utils/site-url";
+import { restaurantJsonLd } from "@/lib/utils/structured-data";
 import "./globals.css";
 
 /* Body: DM Sans — legible y neutra. */
@@ -27,13 +29,12 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl()),
+  // La imagen la genera app/opengraph-image.tsx (Next la añade sola a cada página).
   openGraph: {
     type: "website",
-    locale: siteConfig.locale,
-    url: siteConfig.url,
+    locale: siteConfig.locale.replace("-", "_"),
     siteName: siteConfig.name,
-    images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
   },
 };
 
@@ -52,6 +53,11 @@ export default function RootLayout({
             ("menos movimiento"). Va aquí porque el layout no se vuelve
             a pintar al navegar: el script solo corre en la carga completa. */}
         <script dangerouslySetInnerHTML={{ __html: introSkipScript }} />
+        {/* Ficha de restaurante para Google (schema.org): dirección, horario, carta. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd()) }}
+        />
         {/* Sin JavaScript: ni telón ni animaciones de entrada que dejen el hero oculto. */}
         <noscript>
           <style>

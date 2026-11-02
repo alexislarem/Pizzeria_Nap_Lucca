@@ -18,10 +18,19 @@
 
 ## Horarios
 
-> TODO: Confirmar horarios exactos con el cliente.
+> Confirmados por el cliente el 2026-11-02 (en site.config.ts → hours).
 
-| Día                | Horario sugerido     |
-|--------------------|----------------------|
+| Día        | Horario        |
+|------------|----------------|
+| Lunes      | Cerrado        |
+| Martes     | 19:00 – 23:00  |
+| Miércoles  | 19:00 – 23:30  |
+| Jueves     | 19:00 – 23:30  |
+| Viernes    | 19:00 – 23:30  |
+| Sábado     | 19:00 – 23:30  |
+| Domingo    | Cerrado        |
+
+--------------------|----------------------|
 | Lunes              | Cerrado              |
 | Martes – Domingo   | TODO: por confirmar  |
 

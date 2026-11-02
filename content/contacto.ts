@@ -9,8 +9,14 @@ export const contactoPage = {
   eyebrow: contactSection.eyebrow,
   title: pages.contacto.title,
   subtitle: contactSection.subtitle,
-  photo: { src: "/images/local/fachada.webp", alt: "Fachada acristalada de LUCA en una esquina de Valdepeñas" },
-  detail: { src: "/images/gallery/banderas.webp", alt: "Banderas de Italia, España y Argentina en el local" },
+  photo: {
+    src: "/images/local/fachada.webp",
+    alt: "Fachada acristalada de LUCA en una esquina de Valdepeñas",
+  },
+  detail: {
+    src: "/images/gallery/banderas.webp",
+    alt: "Banderas de Italia, España y Argentina en el local",
+  },
   cta: { label: "Reservar mesa", href: "/reservar" },
 } as const;
 
@@ -18,7 +24,10 @@ export const reservarPage = {
   eyebrow: pages.reservar.eyebrow,
   title: pages.reservar.title,
   intro: pages.reservar.intro,
-  photo: { src: "/images/team/familia-horno.webp", alt: "La familia de LUCA sonriendo delante del horno y del logo amarillo" },
+  photo: {
+    src: "/images/team/familia-horno.webp",
+    alt: "La familia de LUCA sonriendo delante del horno y del logo amarillo",
+  },
   /** Alternativas al formulario, junto a la foto. */
   options: {
     title: "¿Prefieres llamar?",
@@ -55,7 +64,7 @@ export const reservaForm = {
 export const contactoForm = {
   eyebrow: "Ciao bella",
   title: "Escríbenos",
-  subtitle: "Dudas, eventos, foodtrucks o lo que quieras contarnos.",
+  subtitle: "Dudas, eventos o lo que quieras contarnos.",
   labels: { name: "Nombre", email: "Email", phone: "Teléfono", message: "Mensaje" },
   submit: "Enviar mensaje",
   sending: "Enviando…",
@@ -72,4 +81,10 @@ export const contactoMap = {
   eyebrow: "Ti aspettiamo",
   iframeTitle: "Mapa de Google Maps con la ubicación de LUCA en Valdepeñas",
   cta: "Cómo llegar",
+  // Aviso antes de cargar el mapa (Google instala cookies propias): ver /cookies.
+  consent: {
+    text: "El mapa lo sirve Google, que puede instalar sus propias cookies.",
+    load: "Ver mapa",
+    more: "Más información",
+  },
 } as const;
