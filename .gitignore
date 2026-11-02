@@ -40,5 +40,6 @@ next-env.d.ts
 # se quedan solo en local. Lo publicado está optimizado en public/.
 /design/images/fotos/
 /design/images/cosmos/
+/design/images/capturas/
 
 .vercel
