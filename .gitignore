@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+
+# Env — NUNCA subir al repo
+.env
+.env.local
+.env.*.local
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Python (venv existente)
+.venv/
+__pycache__/
+*.pyc
+
+# Misc
+*.tsbuildinfo
+next-env.d.ts
+
+# compilación de verificación (NEXT_DIST_DIR=.next-check pnpm build)
+/.next-check/
+
+# Originales pesados y privados (fotos de la familia) y moodboard sin derechos:
+# se quedan solo en local. Lo publicado está optimizado en public/.
+/design/images/fotos/
+/design/images/cosmos/
+
+.vercel
