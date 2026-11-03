@@ -43,3 +43,6 @@ next-env.d.ts
 /design/images/capturas/
 
 .vercel
+
+# Material del reel (vídeo, audio, scripts y .venv): solo en local, para CapCut
+/video/
