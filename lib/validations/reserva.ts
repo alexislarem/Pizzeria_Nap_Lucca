@@ -2,7 +2,7 @@ import { z } from "zod";
 import { email, longText, name, phone, privacy } from "@/lib/validations/common";
 import { openingHoursFor, todayInSpain } from "@/lib/utils/date";
 
-/** Máximo de comensales por reserva online (8, indicado por el cliente); grupos mayores, por WhatsApp o teléfono. */
+/** Máximo de comensales por reserva online (8, indicado por el cliente); grupos mayores, solo por WhatsApp. */
 export const MAX_GUESTS = 8;
 
 export const reservaSchema = z

@@ -120,6 +120,23 @@ body {
   }
 }
 
+/* iOS Safari: los campos de fecha/hora traen un ancho mínimo propio que ignora
+   `w-full` y se salen de la tarjeta; además el de hora vacío encoge su altura
+   (la altura común la pone `inputClass` con min-h-13). Aquí se igualan al resto. */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.5rem;
+}
+
 /* Foco visible accesible */
 :focus-visible {
   outline: 2px solid var(--color-ring);

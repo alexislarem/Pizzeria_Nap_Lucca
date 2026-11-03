@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils/cn";
 
 /** Estilo común de inputs, selects y textareas (tokens de globals.css). */
 export const inputClass = cn(
-  "w-full rounded-sm border-2 border-border bg-bg px-4 py-3 text-base text-fg transition-colors",
+  // min-h-13 + leading-6: misma altura en todos los controles (iOS dibuja fecha/hora/select a su manera).
+  "min-h-13 w-full rounded-sm border-2 border-border bg-bg px-4 py-3 text-base leading-6 text-fg transition-colors",
   "placeholder:text-fg-muted/70 hover:border-fg-muted focus:border-fg focus:outline-none",
   "aria-[invalid=true]:border-accent"
 );
@@ -41,7 +42,8 @@ export function Field({
     [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div className={className}>
+    // min-w-0: dentro de un grid, evita que un control con ancho propio (fecha en iOS) ensanche la columna.
+    <div className={cn("min-w-0", className)}>
       <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
         {label}
         {optional && <span className="text-fg-muted font-normal"> (opcional)</span>}
