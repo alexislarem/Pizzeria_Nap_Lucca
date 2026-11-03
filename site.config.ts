@@ -26,17 +26,27 @@ export const siteConfig = {
   contact: {
     email: "lucafenap@gmail.com",
     phone: "+34 637 672 493",
+    landline: "+34 926 300 368",
+    // WhatsApp Business del restaurante (2026-11-03). Las reservas del formulario llegan aquí.
+    whatsapp: {
+      // Número en formato internacional sin "+" ni espacios (lo pide wa.me para escribir el mensaje).
+      number: "34637672493",
+      // Enlace corto oficial de WhatsApp Business, para los botones "Escríbenos por WhatsApp".
+      link: "https://wa.me/message/JCNQ5QQRNRRZA1",
+    },
     address: "Avenida Primero de Julio 68, Local 1 esquina, Valdepeñas",
     // Ficha del local en Google Maps (cid sacado del enlace de reseñas que compartió el cliente).
     mapUrl: "https://www.google.com/maps?cid=9373703998933898423",
   },
 
   /* ── Titular de la web (aviso legal y privacidad) ───────── */
-  // Titular indicado por el cliente (2026-11-02); lo pide la LSSI (art. 10).
-  // TODO: confirmar si debe ser el dueño del negocio en lugar del desarrollador.
+  // Titular y responsable de los datos: el dueño del negocio (datos del cliente, 2026-11-03).
+  // Lo piden la LSSI (art. 10) y el RGPD (art. 13). Nombre tal como figura en sus datos fiscales.
   legal: {
-    owner: "Alexis Nascon",
-    taxId: "Z3873470E",
+    owner: "Lucas Luciano Mendez Mardones",
+    taxId: "54444120S",
+    // Domicilio fiscal (el cliente eligió mostrarlo en los textos legales).
+    address: "Avenida Primero de Julio 75, 2.º C, 13300 Valdepeñas (Ciudad Real), España",
     // Solo si es sociedad: datos del Registro Mercantil.
     registry: "",
   },

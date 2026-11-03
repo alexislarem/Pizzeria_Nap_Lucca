@@ -10,7 +10,7 @@ import type { FormResponse } from "@/lib/forms/submit";
 type Base = { website?: string; turnstileToken: string };
 
 type FormHandlerOptions<S extends z.ZodType<Base>> = {
-  /** Nombre corto para el límite de envíos ("reservas", "contacto"). */
+  /** Nombre corto para el límite de envíos ("contacto", "resenas"). */
   key: string;
   schema: S;
   /** Tamaño máximo del cuerpo. Por defecto 10 KB (solo texto); más si lleva fotos. */

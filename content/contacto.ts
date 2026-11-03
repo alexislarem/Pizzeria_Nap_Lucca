@@ -30,7 +30,8 @@ export const reservarPage = {
   },
   /** Alternativas al formulario, junto a la foto. */
   options: {
-    title: "¿Prefieres llamar?",
+    title: "¿Prefieres hablar con nosotros?",
+    whatsapp: { title: "WhatsApp", value: "Escríbenos por WhatsApp" },
     phone: { title: "Llámanos" },
     email: { title: "Escríbenos" },
   },
@@ -49,15 +50,33 @@ export const reservaForm = {
     notes: "Comentarios",
   },
   // MAX_GUESTS (lib/validations/reserva.ts) fija el tope del desplegable.
-  guestsHint: "Para grupos más grandes, llámanos.",
+  guestsHint: "Máximo 8 personas. Para grupos más grandes, escríbenos por WhatsApp o llámanos.",
   notesPlaceholder: "Alergias, trona para bebé, celebraciones…",
-  submit: "Solicitar reserva",
-  sending: "Enviando…",
+  // Al enviar se abre WhatsApp con la reserva escrita (lib/whatsapp/reserva.ts).
+  submit: "Reservar por WhatsApp",
+  sending: "Abriendo WhatsApp…",
+  whatsappNote: "Se abrirá WhatsApp con tu reserva ya escrita: solo tienes que pulsar enviar.",
   success: {
-    title: "¡Grazie mille!",
-    text: "Hemos recibido tu solicitud. Te confirmaremos la mesa lo antes posible.",
+    title: "¡Ya casi está!",
+    text: "Te hemos abierto WhatsApp con la reserva escrita. Pulsa enviar y te confirmaremos la mesa por ahí lo antes posible.",
+    open: "Abrir WhatsApp",
     again: "Hacer otra reserva",
   },
+} as const;
+
+/** Mensaje que llega al WhatsApp de LUCA (lo arma lib/whatsapp/reserva.ts). */
+export const reservaWhatsapp = {
+  greeting: "¡Hola, LUCA! 🍕 Me gustaría reservar mesa:",
+  labels: {
+    date: "Día",
+    time: "Hora",
+    guests: "Personas",
+    name: "Nombre",
+    phone: "Teléfono",
+    email: "Email",
+    notes: "Comentarios",
+  },
+  closing: "¿Me confirmáis la reserva? ¡Grazie mille!",
 } as const;
 
 /** Textos del formulario de Contacto (lib/validations/contacto.ts). */

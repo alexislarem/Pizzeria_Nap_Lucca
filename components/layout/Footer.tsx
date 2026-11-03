@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/site.config";
-import { mailHref, telHref } from "@/lib/utils/contact";
+import { mailHref, telHref, whatsappHref } from "@/lib/utils/contact";
 import { legalDocs } from "@/content/legal";
 import { LucaLogo } from "@/components/ui/LucaLogo";
 
@@ -35,6 +35,17 @@ export function Footer() {
               <p>
                 <a href={telHref} className="underline-offset-4 hover:underline">
                   {contact.phone}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-4 hover:underline"
+                >
+                  WhatsApp
+                  <span className="sr-only"> (se abre en una pestaña nueva)</span>
                 </a>
               </p>
               <p>

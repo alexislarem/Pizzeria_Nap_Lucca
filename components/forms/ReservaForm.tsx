@@ -1,22 +1,31 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, inputClass } from "@/components/forms/Field";
-import { FormError, FormSuccess } from "@/components/forms/FormFeedback";
+import { FormSuccess } from "@/components/forms/FormFeedback";
 import { PrivacyCheck } from "@/components/forms/PrivacyCheck";
-import { Turnstile } from "@/components/forms/Turnstile";
-import { useApiForm } from "@/components/forms/useApiForm";
 import { buttonVariants } from "@/components/ui/Button";
 import { reservaForm as copy } from "@/content/contacto";
 import { MAX_GUESTS, reservaSchema, type Reserva } from "@/lib/validations/reserva";
 import { openingHoursFor, todayInSpain } from "@/lib/utils/date";
+import { reservaWhatsappHref } from "@/lib/whatsapp/reserva";
 import { cn } from "@/lib/utils/cn";
 
 const guestOptions = Array.from({ length: MAX_GUESTS }, (_, i) => String(i + 1));
 
-/** Formulario de reserva → POST /api/reservas → email al restaurante. */
+/**
+ * Formulario de reserva → WhatsApp de LUCA.
+ * Se valida aquí mismo (Zod) y, si todo está bien, se abre WhatsApp con la reserva
+ * ya escrita para el número del restaurante; la persona solo pulsa enviar.
+ * No pasa por ningún servidor ni manda email.
+ */
 export function ReservaForm() {
-  const { form, onSubmit, onToken, turnstileReset, sent, serverError, startOver } =
-    useApiForm<Reserva>(reservaSchema, "/api/reservas", {
+  const form = useForm<Reserva>({
+    resolver: zodResolver(reservaSchema),
+    mode: "onTouched",
+    defaultValues: {
       name: "",
       phone: "",
       email: "",
@@ -25,22 +34,33 @@ export function ReservaForm() {
       guests: "2",
       notes: "",
       privacy: false,
-      website: "",
-      turnstileToken: "",
-    });
+    },
+  });
   const {
     register,
     watch,
     formState: { errors, isSubmitting },
   } = form;
+  // Enlace de WhatsApp de la última reserva: si existe, se muestra el aviso de "ya casi está".
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
 
-  if (sent) {
+  const onSubmit = form.handleSubmit((data) => {
+    const url = reservaWhatsappHref(data);
+    // Pestaña nueva: en el móvil abre la app; en el ordenador, WhatsApp Web o de escritorio.
+    // Si el navegador lo bloquea, el aviso de éxito tiene el botón "Abrir WhatsApp".
+    window.open(url, "_blank", "noopener,noreferrer");
+    form.reset();
+    setWhatsappUrl(url);
+  });
+
+  if (whatsappUrl) {
     return (
       <FormSuccess
         title={copy.success.title}
         text={copy.success.text}
+        action={{ label: copy.success.open, href: whatsappUrl }}
         againLabel={copy.success.again}
-        onAgain={startOver}
+        onAgain={() => setWhatsappUrl(null)}
       />
     );
   }
@@ -178,29 +198,8 @@ export function ReservaForm() {
         registration={register("privacy")}
       />
 
-      {/* Honeypot: fuera de la vista y del teclado; solo un bot lo rellena. */}
-      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
-        <label htmlFor="r-website">No rellenar</label>
-        <input
-          id="r-website"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          {...register("website")}
-        />
-      </div>
-
-      <div className="sm:col-span-6">
-        <Turnstile onToken={onToken} resetKey={turnstileReset} />
-        {errors.turnstileToken?.message && (
-          <p className="text-accent mt-1.5 text-sm font-semibold">
-            {errors.turnstileToken.message}
-          </p>
-        )}
-      </div>
-
       <div className="space-y-4 sm:col-span-6">
-        <FormError message={serverError} />
+        <p className="text-fg-muted text-sm">{copy.whatsappNote}</p>
         <button
           type="submit"
           disabled={isSubmitting}

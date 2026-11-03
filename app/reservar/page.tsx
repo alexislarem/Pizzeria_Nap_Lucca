@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: pages.reservar.description,
 };
 
-/** Reservar: formulario (→ /api/reservas) con alternativas de teléfono y email. */
+/** Reservar: formulario (→ WhatsApp de LUCA) con alternativas de WhatsApp, teléfono y email. */
 export default function ReservarPage() {
   return <ReservarHero />;
 }

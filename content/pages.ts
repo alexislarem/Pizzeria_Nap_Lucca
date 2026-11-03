@@ -25,7 +25,7 @@ export const pages = {
     description: "Reserva tu mesa en LUCA — Pizza Napoletana, Valdepeñas.",
     eyebrow: "Ti aspettiamo",
     // TODO: confirmar el texto con el cliente.
-    intro: "Déjanos tus datos y te confirmamos la mesa por teléfono o email.",
+    intro: "Déjanos tus datos y te confirmamos la mesa por WhatsApp.",
   },
   resenas: {
     title: "Reseñas",

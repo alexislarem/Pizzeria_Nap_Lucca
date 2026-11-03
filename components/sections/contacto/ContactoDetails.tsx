@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import { ArrowUpRight, Clock, Instagram, Mail, MapPin, Phone } from "lucide-react";
-import { instagramHandle, mailHref, mapsHref, telHref } from "@/lib/utils/contact";
+import { ArrowUpRight, Clock, Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { instagramHandle, mailHref, mapsHref, telHref, whatsappHref } from "@/lib/utils/contact";
 import { siteConfig } from "@/site.config";
 
 type Detail = {
@@ -22,6 +22,14 @@ const details: Detail[] = [
     value: contact.address,
     href: mapsHref,
     action: "Cómo llegar",
+    external: true,
+  },
+  {
+    icon: MessageCircle,
+    label: "WhatsApp",
+    value: contact.phone,
+    href: whatsappHref,
+    action: "Escríbenos por WhatsApp",
     external: true,
   },
   { icon: Phone, label: "Teléfono", value: contact.phone, href: telHref },
