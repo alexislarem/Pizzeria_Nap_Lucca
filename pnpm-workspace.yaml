@@ -1,3 +1,6 @@
 allowBuilds:
   esbuild: true
   unrs-resolver: true
+# Seguridad: next 15 fija postcss 8.4.31 (vulnerable a lectura de .map). Forzamos la versión parcheada.
+overrides:
+  postcss: ">=8.5.23"
