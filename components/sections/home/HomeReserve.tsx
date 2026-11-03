@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { homeReserve } from "@/content/home";
 import { siteConfig } from "@/site.config";
-import { mailHref, telHref } from "@/lib/utils/contact";
+import { mailHref, telHref, whatsappHref } from "@/lib/utils/contact";
 
 const { contact } = siteConfig;
 
@@ -32,6 +32,18 @@ export function HomeReserve() {
             <li className="flex items-start gap-3">
               <MapPin aria-hidden size={20} className="mt-1 shrink-0" />
               <span>{contact.address}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <MessageCircle aria-hidden size={20} className="shrink-0" />
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold underline-offset-4 hover:underline"
+              >
+                WhatsApp
+                <span className="sr-only"> (se abre en una pestaña nueva)</span>
+              </a>
             </li>
             <li className="flex items-center gap-3">
               <Phone aria-hidden size={20} className="shrink-0" />

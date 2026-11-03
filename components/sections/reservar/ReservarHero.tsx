@@ -1,23 +1,30 @@
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { ReservaForm } from "@/components/forms/ReservaForm";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { reservaForm, reservarPage } from "@/content/contacto";
-import { mailHref, mapsHref, telHref } from "@/lib/utils/contact";
+import { mailHref, mapsHref, telHref, whatsappHref } from "@/lib/utils/contact";
 import { siteConfig } from "@/site.config";
 
 const { contact } = siteConfig;
 
-type Option = { icon: LucideIcon; label: string; value: string; href: string };
+type Option = { icon: LucideIcon; label: string; value: string; href: string; external?: boolean };
 
 const options: Option[] = [
+  {
+    icon: MessageCircle,
+    label: reservarPage.options.whatsapp.title,
+    value: reservarPage.options.whatsapp.value,
+    href: whatsappHref,
+    external: true,
+  },
   { icon: Phone, label: reservarPage.options.phone.title, value: contact.phone, href: telHref },
   { icon: Mail, label: reservarPage.options.email.title, value: contact.email, href: mailHref },
 ];
 
-/** Reservar: título + formulario a la izquierda; foto y alternativas (llamar, email, dirección) a la derecha. */
+/** Reservar: título + formulario a la izquierda; foto y alternativas (WhatsApp, llamar, email, dirección) a la derecha. */
 export function ReservarHero() {
   return (
     <section aria-labelledby="reservar-title" className="px-4 pt-28 pb-20 md:pt-36 md:pb-28">
@@ -57,15 +64,19 @@ export function ReservarHero() {
               {reservarPage.options.title}
             </h2>
             <ul className="mt-4 space-y-3">
-              {options.map(({ icon: Icon, label, value, href }) => (
+              {options.map(({ icon: Icon, label, value, href, external }) => (
                 <li key={label}>
-                  <a href={href} className="flex items-center gap-3 font-semibold underline-offset-4 hover:underline">
+                  <a
+                    href={href}
+                    {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+                    className="flex items-center gap-3 font-semibold underline-offset-4 hover:underline">
                     <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-pill bg-primary text-on-primary">
                       <Icon size={18} />
                     </span>
                     <span className="break-all">
                       <span className="sr-only">{label}: </span>
                       {value}
+                      {external && <span className="sr-only"> (se abre en una pestaña nueva)</span>}
                     </span>
                   </a>
                 </li>

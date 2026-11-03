@@ -88,7 +88,8 @@ datos estructurados JSON-LD (`Restaurant`) e iconos.
 flowchart LR
     U[Visitante] -->|HTML/RSC| N[Next.js en Vercel]
     N --> C[(content/*.ts<br/>textos, carta, fotos)]
-    U -->|POST formulario| A[/api/reservas · contacto · resenas/]
+    U -->|Reserva| W[WhatsApp Business de LUCA]
+    U -->|POST formulario| A[/api/contacto · resenas/]
     A --> Z{Zod + honeypot}
     Z --> T[Cloudflare Turnstile]
     T --> R[Upstash rate limit]
@@ -106,7 +107,7 @@ flowchart LR
 
 ```
 app/                    Rutas (una carpeta por página) + layout, SEO y API
-  api/{reservas,contacto,resenas}/route.ts
+  api/{contacto,resenas}/route.ts
 components/
   layout/               Navbar, Footer
   sections/<página>/    Secciones de cada página
@@ -144,7 +145,7 @@ pnpm dev                     # http://localhost:3000
 | `NEXT_PUBLIC_URL` | URL canónica del sitio | ✅ |
 | `RESEND_API_KEY` | API de Resend | — |
 | `RESEND_FROM_EMAIL` | Remitente (dominio verificado en Resend) | — |
-| `RESEND_TO_EMAIL` | Buzón que recibe reservas, contactos y reseñas | — |
+| `RESEND_TO_EMAIL` | Buzón que recibe contactos y reseñas (las reservas van por WhatsApp) | — |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Widget de Turnstile | ✅ |
 | `TURNSTILE_SECRET_KEY` | Verificación de Turnstile en servidor | — |
 | `UPSTASH_REDIS_REST_URL` | Redis para el límite de envíos | — |

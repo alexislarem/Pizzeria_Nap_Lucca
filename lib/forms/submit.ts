@@ -1,4 +1,4 @@
-/** Respuesta común de /api/reservas y /api/contacto. */
+/** Respuesta común de /api/contacto y /api/resenas. */
 export type FormResponse = { ok: true } | { ok: false; error: string; fieldErrors?: Record<string, string[] | undefined> };
 
 /** Envía un formulario como JSON. Si falla la red, devuelve un error legible en vez de lanzar. */

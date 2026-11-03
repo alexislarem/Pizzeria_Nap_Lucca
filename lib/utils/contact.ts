@@ -10,6 +10,16 @@ export const telHref = `tel:${contact.phone.replace(/\s/g, "")}`;
 
 export const mailHref = `mailto:${contact.email}`;
 
+/** "+34 926 300 368" → "tel:+34926300368" (fijo del local). */
+export const landlineHref = `tel:${contact.landline.replace(/\s/g, "")}`;
+
+/** Botón genérico "Escríbenos por WhatsApp" (enlace corto oficial de WhatsApp Business). */
+export const whatsappHref = contact.whatsapp.link;
+
+/** Abre un chat con LUCA con `text` ya escrito: la persona solo tiene que pulsar enviar. */
+export const whatsappMessageHref = (text: string) =>
+  `https://wa.me/${contact.whatsapp.number}?text=${encodeURIComponent(text)}`;
+
 /**
  * Enlace "Cómo llegar". Usa el de site.config cuando exista;
  * mientras tanto, una búsqueda de Google Maps con la dirección.

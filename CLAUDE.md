@@ -58,7 +58,8 @@ NEXT_DIST_DIR=.next-check pnpm build   # compilar sin pisar la .next de `pnpm de
 
 ```
 /app                        → Una carpeta por ruta (page.tsx) + layout raíz + globals.css
-/app/api/{reservas,contacto,resenas} → POST de los formularios (route.ts → lib/server/form-handler)
+/app/api/{contacto,resenas}  → POST de los formularios (route.ts → lib/server/form-handler).
+                              Reservas NO usan API: ReservaForm abre WhatsApp con el mensaje (lib/whatsapp/reserva.ts)
 /components/layout          → Navbar, Footer
 /components/sections/<pág>  → Secciones de cada página: home/, nosotros/, carta/,
                               galeria/, contacto/, reservar/, resenas/
@@ -101,7 +102,7 @@ site.config.ts              → Marca, navegación, contacto, horarios, redes
 | `/carta` | `app/carta/page.tsx` | CartaIntro (WiggleDoodle) → CartaNav (sticky, píldora activa) → CartaCategory ×4 (DishTicket interactivo; pizzas: CartaFeatured primero) → HomeReserve | `content/carta.ts` + `menu.ts` |
 | `/galeria` | `app/galeria/page.tsx` | GaleriaIntro → GaleriaGrid (filtros + masonry + Lightbox) → HomeReserve | `content/galeria.ts` |
 | `/contacto` | `app/contacto/page.tsx` | ContactoHero (datos + fotos) → ContactoMap (Google Maps incrustado) → ContactoFormSection | `content/contacto.ts` |
-| `/reservar` | `app/reservar/page.tsx` | ReservarHero (formulario + alternativas) | `content/contacto.ts` |
+| `/reservar` | `app/reservar/page.tsx` | ReservarHero (formulario → WhatsApp de LUCA, máx. 8 personas; alternativas: WhatsApp, teléfono, email). Sin email ni servidor (regla del cliente) | `content/contacto.ts` |
 | `/aviso-legal`, `/privacidad`, `/cookies` | `app/<slug>/page.tsx` | LegalPage (texto + accesos entre ellas) | `content/legal.ts` |
 | `/resenas` | `app/resenas/page.tsx` | ResenasIntro → ResenasWall (barra de comandas: reseñas reales que suben en columnas y se aceleran con el scroll; ReviewCard + InstagramCard) → ResenaFormSection (PeekRating, fotos, SpringCheck, Turnstile, SlideCommit → email para revisar). Sustituye a Foodtrucks (`/foodtrucks` redirige con 307) | `content/resenas.ts` |
 
@@ -169,7 +170,7 @@ Archivos de diseño creados: `brand.md`, `content.md`, `menu.md`, `contact.md`.
       (Figma: https://www.figma.com/design/5uQTdQPf7tjFc2yn7lpLnF — páginas Sistema, Home, Home v2)
 - [x] **Fase 2 — Páginas (multipágina):** Inicio, Nosotros, Carta, Galería, Contacto y
       Reservar rediseñadas con fotos reales, estilo pizza-amici. Foodtrucks: provisional
-- [x] **Fase 3 — Formularios/API:** `/api/reservas` y `/api/contacto` (Zod, honeypot,
+- [x] **Fase 3 — Formularios/API:** `/api/contacto` y `/api/resenas` (Zod, honeypot,
       Turnstile, rate limit Upstash, Resend). Probado con curl; falta probar Turnstile en
       navegador y poner claves reales en Vercel
 - [ ] **Fase 4 — Base de datos:** solo si se quieren reservas con horas disponibles (slots)
@@ -201,7 +202,8 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | 12 | Confirmar copy nuevo del Inicio marcado `TODO` (Hecha en familia, Te guardamos la mesa, Así se ve LUCA…) | ⏳ Usuario |
 | 13 | La foto de la señora (`gallery/margherita-en-mano.webp`) se retiró de la web por petición del usuario: no volver a usarla | ✅ Hecho |
 | 14 | Intro del Inicio: telón que gotea al subir, rehecho en un solo canvas sin sombra (CurtainDrips.tsx → DripCurtain); el hero entra al 80 % de la subida. Comparar con Figma | ⏳ Pendiente |
-| 16 | Titular en aviso legal: Alexis Nascon (desarrollador, a petición del usuario). Confirmar si debe ser el dueño del negocio + revisión por asesor | ⏳ Usuario |
+| 16 | Titular y responsable de datos: Lucas Luciano Mendez Mardones (NIF 54444120S, domicilio fiscal), 2026-11-03. Falta revisión por asesor | ✅ Hecho |
+| 17 | Reservas por WhatsApp (2026-11-03): formulario → wa.me/34637672493 con el mensaje escrito; botones genéricos con el enlace corto. Falta el QR que enviará el usuario | ⏳ Usuario |
 
 Hecho: `/design/*.md`, fotos reales, logo SVG, tipografía (League Spartan Black),
 modelo de reservas (formulario simple → email).

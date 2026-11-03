@@ -1,17 +1,9 @@
 import { z } from "zod";
-import {
-  email,
-  honeypot,
-  longText,
-  name,
-  phone,
-  turnstileToken,
-  privacy,
-} from "@/lib/validations/common";
+import { email, longText, name, phone, privacy } from "@/lib/validations/common";
 import { openingHoursFor, todayInSpain } from "@/lib/utils/date";
 
-/** Máximo de comensales por reserva online; grupos mayores, por teléfono. */
-export const MAX_GUESTS = 12;
+/** Máximo de comensales por reserva online (8, indicado por el cliente); grupos mayores, por WhatsApp o teléfono. */
+export const MAX_GUESTS = 8;
 
 export const reservaSchema = z
   .object({
@@ -31,8 +23,7 @@ export const reservaSchema = z
       .refine((n) => Number(n) >= 1 && Number(n) <= MAX_GUESTS, "Elige cuántos sois"),
     notes: longText(500).optional(),
     privacy,
-    website: honeypot,
-    turnstileToken,
+    // Sin honeypot ni Turnstile: la reserva ya no pasa por el servidor, se envía por WhatsApp.
   })
   .superRefine(({ date, time }, ctx) => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
@@ -55,6 +46,6 @@ export const reservaSchema = z
     }
   });
 
-/** Lo que escribe el usuario (antes de limpiar) y lo que recibe el servidor (ya limpio). */
+/** Lo que escribe el usuario (antes de limpiar) y los datos ya limpios que van al mensaje. */
 export type ReservaInput = z.input<typeof reservaSchema>;
 export type Reserva = z.output<typeof reservaSchema>;

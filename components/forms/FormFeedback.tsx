@@ -2,16 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import { CircleCheck } from "lucide-react";
+import { buttonVariants } from "@/components/ui/Button";
+import { cn } from "@/lib/utils/cn";
 
 type FormSuccessProps = {
   title: string;
   text: string;
   againLabel: string;
   onAgain: () => void;
+  /** Enlace principal opcional (p. ej. "Abrir WhatsApp" si no se abrió solo). */
+  action?: { label: string; href: string };
 };
 
 /** Mensaje de envío correcto. Recibe el foco al aparecer para que el lector de pantalla lo anuncie. */
-export function FormSuccess({ title, text, againLabel, onAgain }: FormSuccessProps) {
+export function FormSuccess({ title, text, againLabel, onAgain, action }: FormSuccessProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => ref.current?.focus(), []);
 
@@ -27,10 +31,21 @@ export function FormSuccess({ title, text, againLabel, onAgain }: FormSuccessPro
         {title}
       </p>
       <p className="mt-3 text-lg">{text}</p>
+      {action && (
+        <a
+          href={action.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(buttonVariants({ variant: "dark" }), "mt-6")}
+        >
+          {action.label}
+          <span className="sr-only"> (se abre en una pestaña nueva)</span>
+        </a>
+      )}
       <button
         type="button"
         onClick={onAgain}
-        className="mt-6 font-semibold underline underline-offset-4"
+        className="mt-6 block font-semibold underline underline-offset-4"
       >
         {againLabel}
       </button>
