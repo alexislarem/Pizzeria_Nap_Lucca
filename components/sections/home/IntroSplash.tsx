@@ -11,7 +11,7 @@ import {
 } from "motion/react";
 import { LOGO_LETTERS, LOGO_PATHS } from "@/components/ui/LucaLogo";
 import { homeIntro } from "@/content/home";
-import { CurtainDrips, DripEdge } from "./CurtainDrips";
+import { CurtainShape } from "./CurtainDrips";
 import { rememberIntroSeen, setIntroState, useIntroSkipped } from "./intro-state";
 
 /**
@@ -20,7 +20,8 @@ import { rememberIntroSeen, setIntroState, useIntroSkipped } from "./intro-state
  *   2. L·U·C·A suben una a una desde debajo de una máscara.
  *   3. Aparece "Pizza Napoletana".
  *   4. El telón sube y el propio amarillo gotea por su borde, como pintura
- *      espesa (CurtainDrips.tsx), mientras descubre el hero.
+ *      espesa, mientras descubre el hero. Telón y gotas son UNA sola forma SVG
+ *      (CurtainDrips.tsx); el div solo pone el fondo mientras se ve el logo.
  * Sale en cada carga del Inicio (también al recargar); no se repite al volver por el menú.
  * Con "menos movimiento" no aparece. Un clic la salta.
  * Es decorativa (aria-hidden): el título real está en el hero.
@@ -84,15 +85,16 @@ export function IntroSplash() {
 
   return (
     <>
+      {/* Telón + goteo (una sola forma). Va antes para quedar detrás del logo. */}
+      <CurtainShape progress={lift} />
       <motion.div
         aria-hidden
-        className="intro-splash bg-primary text-on-primary fixed inset-0 z-[60] grid cursor-pointer place-items-center"
+        className={`intro-splash text-on-primary fixed inset-0 z-[60] grid cursor-pointer place-items-center ${
+          exiting ? "" : "bg-primary"
+        }`}
         style={{ y: curtainY }}
         onClick={() => setPhase("exit")}
       >
-        {/* Borde que chorrea: queda justo bajo el telón y sube con él. */}
-        <DripEdge />
-
         <motion.div
           className="flex w-[min(62vw,19rem)] flex-col items-center"
           initial={false}
@@ -162,7 +164,6 @@ export function IntroSplash() {
           {homeIntro.footnote}
         </motion.p>
       </motion.div>
-      {exiting && <CurtainDrips progress={lift} />}
     </>
   );
 }
