@@ -1,131 +1,238 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import { useEffect, useRef } from "react";
+import type { MotionValue } from "motion/react";
 
 /**
- * Goteo del telón de la intro (referencia: carteles "drip" de design/, el
- * amarillo de marca chorreando por el borde inferior). Al subir el telón, las
- * gotas que cuelgan de su borde se alargan como pintura espesa; cada una suelta
- * una gota redonda que cae mientras el resto se recoge hacia el telón.
+ * Telón amarillo de la intro que sube goteando (efecto "pintura / queso").
  *
- * Coordenadas: lienzo de 100 × 100 a pantalla completa (preserveAspectRatio="none");
- * la y del borde del telón = 100 · (1 − progreso).
+ * Por qué un <canvas> y no capas HTML/SVG:
+ *   antes había un div amarillo + un SVG con sombra; al empezar la subida el div
+ *   se apagaba y la sombra pintaba una línea oscura sobre el hero (también
+ *   amarillo), así que se notaba "una capa por encima". Aquí TODO (telón, borde
+ *   ondulado, gotas colgantes y gotas que caen) se rellena con UNA sola llamada
+ *   a `fill()`: sin uniones ni sombras. Un contorno negro fino (como los dibujos
+ *   de marca) marca el borde y las gotas para separarlo del hero, también amarillo.
+ *
+ * Colores: se leen de las clases `bg-primary` y `text-fg` del canvas (tokens).
  */
 
 type Drip = {
-  /** Posición horizontal (0–100). */
+  /** Posición horizontal (fracción del ancho, 0–1). */
   x: number;
-  /** Ancho de la gota. */
+  /** Grosor del tallo (fracción del ancho). */
   w: number;
-  /** Largo máximo (en % de pantalla) antes de soltar la gota. */
+  /** Largo máximo antes de soltar la gota (fracción del alto). */
   len: number;
   /** Progreso de subida (0–1) en el que suelta la gota. */
   at: number;
 };
 
 const DRIPS: Drip[] = [
-  { x: 3, w: 3, len: 10, at: 0.32 },
-  { x: 9, w: 5, len: 22, at: 0.5 },
-  { x: 16, w: 2.4, len: 8, at: 0.28 },
-  { x: 22, w: 6, len: 30, at: 0.62 },
-  { x: 30, w: 3.2, len: 14, at: 0.4 },
-  { x: 37, w: 4.5, len: 19, at: 0.55 },
-  { x: 44, w: 2.6, len: 9, at: 0.3 },
-  { x: 51, w: 6.5, len: 34, at: 0.68 },
-  { x: 59, w: 3, len: 12, at: 0.36 },
-  { x: 66, w: 5, len: 25, at: 0.58 },
-  { x: 73, w: 2.4, len: 10, at: 0.33 },
-  { x: 80, w: 4, len: 17, at: 0.46 },
-  { x: 87, w: 5.5, len: 28, at: 0.64 },
-  { x: 95, w: 3.4, len: 13, at: 0.42 },
-];
+  { x: 0.03, w: 0.022, len: 0.1, at: 0.32 },
+  { x: 0.09, w: 0.034, len: 0.22, at: 0.5 },
+  { x: 0.16, w: 0.018, len: 0.08, at: 0.28 },
+  { x: 0.22, w: 0.04, len: 0.3, at: 0.62 },
+  { x: 0.3, w: 0.024, len: 0.14, at: 0.4 },
+  { x: 0.37, w: 0.032, len: 0.19, at: 0.55 },
+  { x: 0.44, w: 0.02, len: 0.09, at: 0.3 },
+  { x: 0.51, w: 0.044, len: 0.34, at: 0.68 },
+  { x: 0.59, w: 0.022, len: 0.12, at: 0.36 },
+  { x: 0.66, w: 0.036, len: 0.25, at: 0.58 },
+  { x: 0.73, w: 0.018, len: 0.1, at: 0.33 },
+  { x: 0.8, w: 0.03, len: 0.17, at: 0.46 },
+  { x: 0.87, w: 0.04, len: 0.28, at: 0.64 },
+  { x: 0.95, w: 0.025, len: 0.13, at: 0.42 },
+].sort((a, b) => b.x - a.x); // el borde se recorre de derecha a izquierda
 
-const f = (n: number) => n.toFixed(2);
+/** Constante para aproximar un cuarto de círculo con una curva Bézier. */
+const K = 0.5523;
+/** Radio de la curva que une cada gota con el telón (en medios tallos). */
+const FILLET = 1.3;
+/** Grosor (px) del contorno del borde inferior y las gotas. */
+const LINE = 3;
+/** Margen fuera de pantalla para los lados del telón (mayor que el contorno). */
+const OUT = 8;
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
-/** Gota colgante con la punta redondeada (más gorda abajo, como pintura). */
-function hanging(x: number, top: number, w: number, len: number): string {
-  if (len < 0.2) return "";
-  const h = w / 2;
-  const neck = w * 0.32;
-  const bulb = Math.min(w * 0.45, len * 0.5);
-  const end = top + len;
-  return [
-    `M${f(x - h)} ${f(top)}`,
-    `C${f(x - h)} ${f(top + len * 0.3)} ${f(x - neck)} ${f(top + len * 0.45)} ${f(x - neck)} ${f(end - bulb)}`,
-    `C${f(x - neck)} ${f(end - bulb * 0.2)} ${f(x - h * 0.55)} ${f(end)} ${f(x)} ${f(end)}`,
-    `C${f(x + h * 0.55)} ${f(end)} ${f(x + neck)} ${f(end - bulb * 0.2)} ${f(x + neck)} ${f(end - bulb)}`,
-    `C${f(x + neck)} ${f(top + len * 0.45)} ${f(x + h)} ${f(top + len * 0.3)} ${f(x + h)} ${f(top)}`,
-    "Z",
-  ].join(" ");
+/**
+ * Gota colgante como tramo del borde (de derecha a izquierda):
+ * curva que nace del telón → tallo → bulbo redondo → vuelta. Devuelve el
+ * extremo izquierdo, donde sigue el borde.
+ */
+function hangingDrip(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  top: number,
+  L: number,
+  s0: number,
+  b0: number
+): number {
+  const r0 = s0 * FILLET;
+  // Si aún es corta, todo se escala: empieza como un bultito que se alarga.
+  const g = Math.min(1, L / (r0 + 2 * b0));
+  const s = s0 * g;
+  const b = b0 * g;
+  const r = r0 * g;
+  const cy = top + L - b; // centro del bulbo
+  const neck = Math.max(top + r, cy - b * 0.9);
+
+  ctx.lineTo(x + s + r, top);
+  ctx.bezierCurveTo(x + s + r * 0.45, top, x + s, top + r * 0.55, x + s, top + r);
+  ctx.lineTo(x + s, neck);
+  ctx.bezierCurveTo(x + s, cy - b * 0.45, x + b, cy - b * 0.6, x + b, cy);
+  ctx.bezierCurveTo(x + b, cy + b * K, x + b * K, cy + b, x, cy + b);
+  ctx.bezierCurveTo(x - b * K, cy + b, x - b, cy + b * K, x - b, cy);
+  ctx.bezierCurveTo(x - b, cy - b * 0.6, x - s, cy - b * 0.45, x - s, neck);
+  ctx.lineTo(x - s, top + r);
+  ctx.bezierCurveTo(x - s, top + r * 0.55, x - s - r * 0.45, top, x - s - r, top);
+
+  return x - s - r;
 }
 
-/** Gota suelta: elipse (en pantalla se ve redonda o algo alargada). */
-function drop(x: number, y: number, r: number): string {
-  if (r < 0.05) return "";
-  return `M${f(x - r)} ${f(y)} a${f(r)} ${f(r * 1.3)} 0 1 0 ${f(2 * r)} 0 a${f(r)} ${f(r * 1.3)} 0 1 0 ${f(-2 * r)} 0 Z`;
-}
+/** Dibuja el telón completo para un progreso p (0 cubre todo → 1 fuera) y un tiempo t (s). */
+function drawCurtain(
+  ctx: CanvasRenderingContext2D,
+  p: number,
+  t: number,
+  W: number,
+  H: number,
+  fill: string,
+  line: string
+) {
+  ctx.clearRect(0, 0, W, H);
 
-/** Forma de una gota según el progreso de subida del telón (0 → 1). */
-function dripPath({ x, w, len, at }: Drip, p: number): string {
-  const top = 100 * (1 - p);
-  if (p <= 0) return "M0 0Z";
-  if (p < at) {
-    // Se estira: crece rápido al principio y se ralentiza (pintura espesa).
-    const grow = 1 - (1 - p / at) ** 2;
-    return hanging(x, top, w, len * grow) || "M0 0Z";
+  // Ondulación del borde ("derritiéndose"); se mueve despacio con el tiempo.
+  const sag = Math.min(14, H * 0.016);
+  // Recorrido algo mayor que la pantalla: en p=0 el borde queda por debajo
+  // (no asoma nada) y en p=1 por encima (no queda ninguna franja).
+  const top = -3 * sag + (H + 6 * sag) * (1 - p);
+
+  const drops: { x: number; y: number; rx: number; ry: number }[] = [];
+
+  ctx.beginPath();
+  // Los lados y el techo quedan fuera de pantalla: así el contorno solo se ve abajo.
+  ctx.moveTo(-OUT, -OUT);
+  ctx.lineTo(W + OUT, -OUT);
+  ctx.lineTo(W + OUT, top);
+  let prevX = W + OUT;
+
+  DRIPS.forEach((d, i) => {
+    const x = d.x * W;
+    const s = Math.min(26, Math.max(4, d.w * W * 0.3)); // medio tallo
+    const b = s * 1.3; // bulbo algo más gordo que el tallo
+    const maxL = d.len * H;
+
+    let L: number;
+    if (p < d.at) {
+      // Se estira: rápido al principio y se frena (pintura espesa) + leve bamboleo.
+      L = maxL * (1 - (1 - p / d.at) ** 2.2) * (1 + 0.03 * Math.sin(t * 5 + i));
+    } else {
+      // Suelta el bulbo y el resto se recoge hacia el telón.
+      const k = (p - d.at) / (1 - d.at);
+      L = maxL * 0.5 * (1 - clamp01(k * 2.4)) ** 1.5;
+      // La gota cae con gravedad desde donde estaba el bulbo y se alarga al caer.
+      const shrink = 1 - k * 0.5;
+      drops.push({
+        x,
+        y: H * (1 - d.at) + maxL - b + k * k * H * 1.6,
+        rx: b * shrink,
+        ry: b * shrink * (1 + k * 0.45),
+      });
+    }
+
+    // Tramo ondulado del borde hasta esta gota (nunca hacia atrás: evita picos).
+    const edgeX = Math.min(x + s * (1 + FILLET), prevX - 1);
+    const mid = (prevX + edgeX) / 2;
+    const wave = 0.8 + 0.4 * Math.sin(mid * 0.013 + t * 2.2);
+    ctx.quadraticCurveTo(mid, top + sag * wave, edgeX, top);
+
+    if (L > 3) { // más corta no se dibuja: evita un puntito en el contorno
+      prevX = hangingDrip(ctx, x, top, L, s, b);
+    } else {
+      prevX = edgeX;
+    }
+  });
+
+  ctx.quadraticCurveTo(prevX / 2, top + sag, -OUT, top);
+  ctx.closePath();
+
+  // Gotas sueltas: subtrazados del MISMO path → se rellenan a la vez, sin costuras.
+  for (const drop of drops) {
+    if (drop.rx < 0.5 || drop.y - drop.ry > H) continue;
+    ctx.moveTo(drop.x + drop.rx, drop.y);
+    ctx.ellipse(drop.x, drop.y, drop.rx, drop.ry, 0, 0, Math.PI * 2);
   }
-  // Suelta la gota: lo que cuelga se recoge y la gota cae.
-  const t = (p - at) / (1 - at); // 0 → 1 tras soltarla
-  const rest = hanging(x, top, w, len * 0.55 * Math.max(0, 1 - t * 2.2));
-  const fallStart = 100 * (1 - at) + len; // donde estaba la punta al soltarse
-  const ball = drop(x, fallStart + t * t * 140, w * 0.32 * Math.max(0, 1 - t * 0.6));
-  return [rest, ball].filter(Boolean).join(" ") || "M0 0Z";
+
+  ctx.fillStyle = fill;
+  ctx.fill();
+
+  // Contorno del borde y de las gotas (como los dibujos de marca): separa el
+  // telón del hero, que es del mismo amarillo, sin sombras ni capas extra.
+  ctx.strokeStyle = line;
+  ctx.lineWidth = LINE;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.stroke();
 }
 
-function DripPath({ drip, progress }: { drip: Drip; progress: MotionValue<number> }) {
-  const d = useTransform(progress, (p) => dripPath(drip, p));
-  return <motion.path d={d} className="fill-primary" />;
-}
+/**
+ * Telón + goteo. `progress` = subida (0 cubre todo → 1 fuera).
+ * Hasta que pinta el primer fotograma, el propio canvas tiene fondo amarillo
+ * (viene así del servidor), así nunca hay un parpadeo del hero.
+ */
+export function DripCurtain({ progress }: { progress: MotionValue<number> }) {
+  const ref = useRef<HTMLCanvasElement>(null);
 
-/** Borde del telón: una ondulación suave para que las gotas nazcan "derritiéndose". */
-const EDGE_PATH = (() => {
-  const parts = ["M0 0 L100 0 L100 2.5"];
-  let prev = 100;
-  for (const { x, w } of [...DRIPS].reverse()) {
-    parts.push(`Q${f((prev + x + w / 2) / 2)} 3.6 ${f(x + w / 2)} 2.6`);
-    parts.push(`C${f(x + w / 2)} 6 ${f(x - w / 2)} 6 ${f(x - w / 2)} 2.6`);
-    prev = x - w / 2;
-  }
-  parts.push(`Q${f(prev / 2)} 3.6 0 2.5 Z`);
-  return parts.join(" ");
-})();
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
 
-/** Borde ondulado: se pinta dentro del telón (top-full) y sube con él. */
-export function DripEdge() {
+    // Colores de los tokens, leídos de las clases del canvas antes de quitar el fondo:
+    // `bg-primary` = relleno amarillo, `text-fg` = contorno negro de marca.
+    const styles = getComputedStyle(canvas);
+    const fill = styles.backgroundColor;
+    const line = styles.color;
+
+    let W = 0;
+    let H = 0;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const start = performance.now();
+    let raf = 0;
+    let first = true;
+    const frame = (now: number) => {
+      drawCurtain(ctx, progress.get(), (now - start) / 1000, W, H, fill, line);
+      if (first) {
+        // El canvas ya se pinta solo: fuera el fondo de reserva (mismo fotograma).
+        canvas.style.backgroundColor = "transparent";
+        first = false;
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+    };
+  }, [progress]);
+
   return (
-    <svg
+    <canvas
+      ref={ref}
       aria-hidden
-      viewBox="0 0 100 10"
-      preserveAspectRatio="none"
-      className="drop-shadow-drip absolute inset-x-0 top-full -mt-px h-[6vh] w-full"
-    >
-      <path d={EDGE_PATH} className="fill-primary" />
-    </svg>
-  );
-}
-
-/** Gotas que cuelgan del telón mientras sube. `progress` = subida del telón (0 → 1). */
-export function CurtainDrips({ progress }: { progress: MotionValue<number> }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      className="drop-shadow-drip pointer-events-none fixed inset-0 z-[60] size-full"
-    >
-      {DRIPS.map((drip) => (
-        <DripPath key={drip.x} drip={drip} progress={progress} />
-      ))}
-    </svg>
+      className="intro-splash bg-primary text-fg pointer-events-none fixed inset-0 z-[60] size-full"
+    />
   );
 }

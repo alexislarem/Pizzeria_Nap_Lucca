@@ -55,8 +55,6 @@
   /* ── Sombras ─────────────────────────────── */
   --shadow-soft: 0 12px 32px -12px rgb(26 26 26 / 0.18);
   --shadow-card: 0 4px 16px -6px rgb(26 26 26 / 0.12);
-  /* Goteo del telón de la intro: da volumen al amarillo cuando pasa sobre el hero amarillo. */
-  --drop-shadow-drip: 0 10px 12px rgb(26 26 26 / 0.22);
 
   /* ── Animaciones ─────────────────────────── */
   /* Franja de frases: desplaza la mitad del ancho (la lista va duplicada). */

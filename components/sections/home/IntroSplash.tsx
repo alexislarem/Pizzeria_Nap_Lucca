@@ -11,7 +11,7 @@ import {
 } from "motion/react";
 import { LOGO_LETTERS, LOGO_PATHS } from "@/components/ui/LucaLogo";
 import { homeIntro } from "@/content/home";
-import { CurtainDrips, DripEdge } from "./CurtainDrips";
+import { DripCurtain } from "./CurtainDrips";
 import { rememberIntroSeen, setIntroState, useIntroSkipped } from "./intro-state";
 
 /**
@@ -20,7 +20,8 @@ import { rememberIntroSeen, setIntroState, useIntroSkipped } from "./intro-state
  *   2. L·U·C·A suben una a una desde debajo de una máscara.
  *   3. Aparece "Pizza Napoletana".
  *   4. El telón sube y el propio amarillo gotea por su borde, como pintura
- *      espesa (CurtainDrips.tsx), mientras descubre el hero.
+ *      espesa, mientras descubre el hero. Telón y gotas se pintan en UN solo
+ *      canvas (CurtainDrips.tsx); este div solo lleva el logo, sin fondo propio.
  * Sale en cada carga del Inicio (también al recargar); no se repite al volver por el menú.
  * Con "menos movimiento" no aparece. Un clic la salta.
  * Es decorativa (aria-hidden): el título real está en el hero.
@@ -32,6 +33,8 @@ const HOLD_MS = 2300;
 const CURTAIN: Transition = { duration: 0.95, ease: [0.76, 0, 0.24, 1] };
 /** Subida con goteo: algo más lenta al principio para que se vea cómo chorrea. */
 const DRIP_LIFT: Transition = { duration: 1.9, ease: [0.5, 0, 0.25, 1] };
+/** Progreso de subida (0–1) a partir del cual entra el hero. */
+const HERO_AT = 0.8;
 const RISE: Transition = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
 
 type Phase = "logo" | "exit" | "gone";
@@ -64,11 +67,22 @@ export function IntroSplash() {
     };
   }, [hidden, reduceMotion, phase]);
 
-  // El hero empieza su entrada a la vez que sube el telón.
+  // El hero entra cuando el telón casi ha salido: antes, sus textos quedarían
+  // cortados por gotas amarillas invisibles sobre el amarillo del hero.
   useEffect(() => {
-    if (phase === "exit") setIntroState("done");
-    if (phase === "gone") rememberIntroSeen();
-  }, [phase]);
+    if (phase === "gone") {
+      setIntroState("done");
+      rememberIntroSeen();
+      return;
+    }
+    if (phase !== "exit") return;
+    const stop = lift.on("change", (p) => {
+      if (p < HERO_AT) return;
+      setIntroState("done");
+      stop(); // solo una vez
+    });
+    return stop;
+  }, [phase, lift]);
 
   // Subida del telón con el goteo; al terminar, la intro desaparece.
   useEffect(() => {
@@ -84,15 +98,14 @@ export function IntroSplash() {
 
   return (
     <>
+      {/* Telón + goteo (un solo canvas). Va antes para quedar detrás del logo. */}
+      <DripCurtain progress={lift} />
       <motion.div
         aria-hidden
-        className="intro-splash bg-primary text-on-primary fixed inset-0 z-[60] grid cursor-pointer place-items-center"
+        className="intro-splash text-on-primary fixed inset-0 z-[60] grid cursor-pointer place-items-center"
         style={{ y: curtainY }}
         onClick={() => setPhase("exit")}
       >
-        {/* Borde que chorrea: queda justo bajo el telón y sube con él. */}
-        <DripEdge />
-
         <motion.div
           className="flex w-[min(62vw,19rem)] flex-col items-center"
           initial={false}
@@ -162,7 +175,6 @@ export function IntroSplash() {
           {homeIntro.footnote}
         </motion.p>
       </motion.div>
-      {exiting && <CurtainDrips progress={lift} />}
     </>
   );
 }

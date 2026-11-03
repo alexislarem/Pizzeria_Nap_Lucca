@@ -47,11 +47,17 @@ export function createFormHandler<S extends z.ZodType<Base>>({
       return reply({ ok: false, error: "El formulario no está disponible ahora mismo. Llámanos, por favor." }, 503);
     }
 
+    // Primero por la cabecera (sin leer el cuerpo); después, por lo leído de verdad y en bytes.
+    const tooLarge = () => reply({ ok: false, error: "Mensaje demasiado largo." }, 413);
+    if (Number(req.headers.get("content-length") ?? 0) > maxBodyBytes) return tooLarge();
     const raw = await req.text();
-    if (raw.length > maxBodyBytes) return reply({ ok: false, error: "Mensaje demasiado largo." }, 413);
+    if (Buffer.byteLength(raw) > maxBodyBytes) return tooLarge();
 
-    // En Vercel, la IP real del visitante es la primera de x-forwarded-for.
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    // x-real-ip la pone Vercel y el visitante no puede falsificarla; x-forwarded-for, de reserva.
+    const ip =
+      req.headers.get("x-real-ip")?.trim() ||
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "unknown";
 
     try {
       if (await isRateLimited(`${key}:${ip}`, env)) {
