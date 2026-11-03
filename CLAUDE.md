@@ -200,7 +200,7 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | 11 | Fotos del moodboard retiradas de la web y sustituidas por fotos propias (no reintroducir `public/images/inspiracion`) | ✅ Hecho |
 | 12 | Confirmar copy nuevo del Inicio marcado `TODO` (Hecha en familia, Te guardamos la mesa, Así se ve LUCA…) | ⏳ Usuario |
 | 13 | La foto de la señora (`gallery/margherita-en-mano.webp`) se retiró de la web por petición del usuario: no volver a usarla | ✅ Hecho |
-| 14 | Intro del Inicio: telón amarillo que gotea al subir (CurtainDrips.tsx; el queso se descartó). Comparar con Figma | ⏳ Pendiente |
+| 14 | Intro del Inicio: telón que gotea al subir, rehecho en un solo canvas sin sombra (CurtainDrips.tsx → DripCurtain); el hero entra al 80 % de la subida. Comparar con Figma | ⏳ Pendiente |
 | 16 | Titular en aviso legal: Alexis Nascon (desarrollador, a petición del usuario). Confirmar si debe ser el dueño del negocio + revisión por asesor | ⏳ Usuario |
 
 Hecho: `/design/*.md`, fotos reales, logo SVG, tipografía (League Spartan Black),
