@@ -50,7 +50,7 @@ export const reservaForm = {
     notes: "Comentarios",
   },
   // MAX_GUESTS (lib/validations/reserva.ts) fija el tope del desplegable.
-  guestsHint: "Máximo 8 personas. Para grupos más grandes, escríbenos por WhatsApp o llámanos.",
+  guestsHint: "Máximo 8 personas. Para grupos más grandes, contáctanos por WhatsApp.",
   notesPlaceholder: "Alergias, trona para bebé, celebraciones…",
   // Al enviar se abre WhatsApp con la reserva escrita (lib/whatsapp/reserva.ts).
   submit: "Reservar por WhatsApp",

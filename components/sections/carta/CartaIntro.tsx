@@ -10,7 +10,7 @@ const DOODLE_LAYOUT = [
     rotate: -10,
     className: "absolute -top-8 right-2 w-14 md:-top-16 md:right-8 md:w-20",
   },
-  { rotate: 8, className: "absolute -bottom-8 -left-3 z-10 w-16 md:-left-8 md:w-24" },
+  { rotate: 8, className: "absolute -bottom-8 left-0 z-10 w-16 md:-left-8 md:w-24" },
   { rotate: -6, className: "absolute -top-10 right-0 z-10 w-20 md:w-28 xl:-right-8" },
 ] as const;
 
