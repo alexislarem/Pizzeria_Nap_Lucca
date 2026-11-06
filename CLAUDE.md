@@ -80,7 +80,11 @@ NEXT_DIST_DIR=.next-check pnpm build   # compilar sin pisar la .next de `pnpm de
 /content/<pág>.ts           → Textos y fotos de cada página (home, nosotros, carta,
                               galeria, contacto, resenas, pages) + menu.ts (platos y precios)
                               + doodles.ts (dibujos de marca)
-/lib/server                 → Solo servidor: env, Turnstile, rate limit, Resend, form-handler
+/lib/server                 → Solo servidor: env, Turnstile, rate limit, redis, form-handler
+/lib/server/email           → layout.ts (plantilla HTML de marca, colores copiados de globals.css),
+                              templates.ts (un email por caso), send.ts (Resend)
+/lib/server/reviews         → store.ts (reseñas en Upstash; fotos a Vercel Blob al publicar),
+                              token.ts (enlaces firmados HMAC, 30 días), public.ts (muro, caché "web-reviews")
 /lib/validations            → Esquemas Zod compartidos navegador/servidor
 /lib/utils                  → cn, formatPrice, fechas, enlaces de contacto (telHref…)
 /design                     → Fuente de verdad: *.md + images/ (originales en fotos/,
@@ -104,6 +108,7 @@ site.config.ts              → Marca, navegación, contacto, horarios, redes
 | `/contacto` | `app/contacto/page.tsx` | ContactoHero (datos + fotos) → ContactoMap (Google Maps incrustado) → ContactoFormSection | `content/contacto.ts` |
 | `/reservar` | `app/reservar/page.tsx` | ReservarHero (formulario → WhatsApp de LUCA, máx. 8 personas; alternativas: WhatsApp, teléfono, email). Sin email ni servidor (regla del cliente) | `content/contacto.ts` |
 | `/aviso-legal`, `/privacidad`, `/cookies` | `app/<slug>/page.tsx` | LegalPage (texto + accesos entre ellas) | `content/legal.ts` |
+| `/resenas/moderar` | `app/resenas/moderar/` | Privada (noindex): se abre desde el email; vista previa + Publicar/Rechazar (Server Action) | `content/resenas.ts` → resenaModeracion |
 | `/resenas` | `app/resenas/page.tsx` | ResenasIntro → ResenasWall (barra de comandas: reseñas reales que suben en columnas y se aceleran con el scroll; ReviewCard + InstagramCard) → ResenaFormSection (PeekRating, fotos, SpringCheck, Turnstile, SlideCommit → email para revisar). Sustituye a Foodtrucks (`/foodtrucks` redirige con 307) | `content/resenas.ts` |
 
 ### Patrones a seguir
@@ -203,6 +208,7 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | 13 | La foto de la señora (`gallery/margherita-en-mano.webp`) se retiró de la web por petición del usuario: no volver a usarla | ✅ Hecho |
 | 14 | Intro del Inicio: telón que gotea al subir, rehecho en un solo canvas sin sombra (CurtainDrips.tsx → DripCurtain); el hero entra al 80 % de la subida. Comparar con Figma | ⏳ Pendiente |
 | 16 | Titular y responsable de datos: Lucas Luciano Mendez Mardones (NIF 54444120S, domicilio fiscal), 2026-11-03. Falta revisión por asesor | ✅ Hecho |
+| 18 | Moderación de reseñas por email (2026-11-06): falta en Vercel `REVIEW_SIGNING_SECRET` y crear Blob store (`BLOB_READ_WRITE_TOKEN`); probar una reseña real de punta a punta | ⏳ Usuario |
 | 17 | Reservas por WhatsApp (2026-11-03): formulario → wa.me/34637672493 con el mensaje escrito; botones genéricos con el enlace corto. Falta el QR que enviará el usuario | ⏳ Usuario |
 
 Hecho: `/design/*.md`, fotos reales, logo SVG, tipografía (League Spartan Black),

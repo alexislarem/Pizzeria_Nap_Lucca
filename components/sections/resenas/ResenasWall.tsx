@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useAnimationFrame,
@@ -13,7 +13,7 @@ import {
 import { MapPin, Pause, Play } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { resenasWall, reviewSources, reviews } from "@/content/resenas";
+import { resenasWall, reviewSources, reviews, type Review } from "@/content/resenas";
 import { InstagramCard, ReviewCard } from "./ReviewCard";
 
 /** Velocidad base de cada columna (px/s): distintas para que no suban a la par. */
@@ -24,13 +24,16 @@ const MIN_PER_COLUMN = 4;
 /** Una comanda de la barra: una reseña (con su número) o la tarjeta de Instagram. */
 type Slot = { key: string; node: ReactNode };
 
-const slots: Slot[] = [
-  ...reviews.map((review, i) => ({
-    key: review.id,
-    node: <ReviewCard review={review} number={i + 1} />,
-  })),
-  { key: "instagram", node: <InstagramCard /> },
-];
+/** Primero las reseñas de la web (las más nuevas), después las de Google y, al final, Instagram. */
+function buildSlots(webReviews: Review[]): Slot[] {
+  return [
+    ...[...webReviews, ...reviews].map((review, i) => ({
+      key: review.id,
+      node: <ReviewCard review={review} number={i + 1} />,
+    })),
+    { key: "instagram", node: <InstagramCard /> },
+  ];
+}
 
 /** 1 columna en móvil, 2 en tablet, 3 en escritorio (en el servidor, 1). */
 function useColumnCount() {
@@ -51,7 +54,7 @@ function useColumnCount() {
 }
 
 /** Reparte las comandas en columnas (1ª, 2ª, 3ª, 1ª…) y repite si una se queda corta. */
-function distribute(count: number): Slot[][] {
+function distribute(slots: Slot[], count: number): Slot[][] {
   const columns = Array.from({ length: count }, (_, c) =>
     slots.filter((_, i) => i % count === c)
   );
@@ -114,7 +117,13 @@ function RailColumn({ items, speed, paused }: RailColumnProps) {
  * enfocar una con el teclado o con el botón de pausa. Con "menos movimiento",
  * se muestran quietas en rejilla.
  */
-export function ResenasWall() {
+type ResenasWallProps = {
+  /** Reseñas enviadas desde la web y aprobadas por email (las lee la página en el servidor). */
+  webReviews?: Review[];
+};
+
+export function ResenasWall({ webReviews = [] }: ResenasWallProps) {
+  const slots = useMemo(() => buildSlots(webReviews), [webReviews]);
   const reduceMotion = useReducedMotion();
   const columnCount = useColumnCount();
   const [paused, setPaused] = useState(false);
@@ -175,7 +184,7 @@ export function ResenasWall() {
             onFocus={() => setHovered(true)}
             onBlur={() => setHovered(false)}
           >
-            {distribute(columnCount).map((items, c) => (
+            {distribute(slots, columnCount).map((items, c) => (
               <RailColumn
                 key={`${columnCount}-${c}`}
                 items={items}

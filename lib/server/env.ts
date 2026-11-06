@@ -16,14 +16,25 @@ const schema = z.object({
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
 });
 
-export type ServerEnv = z.infer<typeof schema>;
+/** Extra de las reseñas: la clave con la que se firman los enlaces "Publicar / Rechazar". */
+const reviewsSchema = schema.extend({
+  REVIEW_SIGNING_SECRET: z.string().min(32, "REVIEW_SIGNING_SECRET debe tener 32 caracteres o más"),
+});
 
-/** Devuelve las variables o lanza un error que dice cuáles faltan (sin mostrar sus valores). */
-export function serverEnv(): ServerEnv {
-  const parsed = schema.safeParse(process.env);
+export type ServerEnv = z.infer<typeof schema>;
+export type ReviewsEnv = z.infer<typeof reviewsSchema>;
+
+function parse<S extends z.ZodTypeAny>(s: S): z.infer<S> {
+  const parsed = s.safeParse(process.env);
   if (!parsed.success) {
     const missing = parsed.error.issues.map((i) => i.path.join(".")).join(", ");
     throw new Error(`Faltan o son inválidas estas variables de entorno: ${missing}`);
   }
   return parsed.data;
 }
+
+/** Devuelve las variables o lanza un error que dice cuáles faltan (sin mostrar sus valores). */
+export const serverEnv = (): ServerEnv => parse(schema);
+
+/** Como serverEnv, más la clave de firma de las reseñas. */
+export const reviewsEnv = (): ReviewsEnv => parse(reviewsSchema);

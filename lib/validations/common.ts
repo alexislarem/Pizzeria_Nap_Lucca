@@ -5,8 +5,23 @@ import { z } from "zod";
  * El mismo esquema se usa en el navegador (mensajes al instante) y en el servidor (la comprobación que vale).
  */
 
-/** Quita caracteres de control (salvo saltos de línea) y espacios sobrantes. */
-const clean = (value: string) => value.replace(/[^\P{Cc}\n]/gu, "").trim();
+/**
+ * Quita código HTML que alguien intente colar: los bloques <script>/<style> enteros
+ * (con lo que llevan dentro) y cualquier otra etiqueta (<b>, <img …>, <a …>).
+ * Así ni el restaurante en su correo ni los visitantes en la web ven nunca ese código.
+ * "5 < 6" no se toca: solo se quita lo que empieza como una etiqueta (< seguido de letra).
+ */
+const stripHtml = (value: string) =>
+  value
+    .replace(/<(script|style|iframe|object|embed)\b[^>]*>[\s\S]*?(<\/\1\s*>|$)/gi, "")
+    .replace(/<\/?[a-z!][^>]*>?/gi, "");
+
+/** Quita HTML, caracteres de control (salvo saltos de línea) y espacios sobrantes. */
+const clean = (value: string) =>
+  stripHtml(value)
+    .replace(/[^\P{Cc}\n]/gu, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 
 /** Texto de una línea: sin saltos de línea (evita inyectar cabeceras en el email). */
 export const line = (max: number) =>

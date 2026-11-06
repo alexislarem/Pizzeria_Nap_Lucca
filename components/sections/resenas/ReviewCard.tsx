@@ -1,11 +1,12 @@
-import { Instagram, MapPin, Star } from "lucide-react";
+import Image from "next/image";
+import { Globe, Instagram, MapPin, Star } from "lucide-react";
 import { Doodle } from "@/components/ui/Doodle";
 import { PulseHeart } from "@/components/ui/PulseHeart";
 import { WarmTooltip } from "@/components/ui/WarmTooltip";
 import { resenasWall, reviewSources, type Review } from "@/content/resenas";
 import { cn } from "@/lib/utils/cn";
 
-const SOURCE_ICON = { google: MapPin, instagram: Instagram } as const;
+const SOURCE_ICON = { google: MapPin, instagram: Instagram, web: Globe } as const;
 
 /** Inclinación de cada comanda, como papeles colgados a mano en la barra. */
 const TILTS = ["-rotate-1", "rotate-[0.6deg]", "-rotate-[0.4deg]", "rotate-1"] as const;
@@ -66,7 +67,26 @@ export function ReviewCard({ review, number }: ReviewCardProps) {
         </WarmTooltip>
       </div>
 
-      <p className="mt-3 leading-relaxed">{review.text}</p>
+      <p className="mt-3 leading-relaxed whitespace-pre-line">{review.text}</p>
+
+      {review.photos && review.photos.length > 0 && (
+        <ul className="mt-4 grid grid-cols-3 gap-2">
+          {review.photos.map((photo) => (
+            <li
+              key={photo.src}
+              className="border-fg relative aspect-square overflow-hidden rounded-sm border-2"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(min-width: 1024px) 110px, 30vw"
+                className="object-cover"
+              />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {review.reply && (
         <div className="border-primary bg-bg/60 mt-4 rounded-sm border-l-4 p-3">
