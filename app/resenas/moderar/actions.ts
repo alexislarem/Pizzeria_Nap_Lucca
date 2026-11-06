@@ -48,8 +48,11 @@ export async function moderateReview(_prev: ModerationState, form: FormData): Pr
       return { status: "rejected" };
     }
 
-    if (review.photoCount > 0 && !process.env.BLOB_READ_WRITE_TOKEN) {
-      console.error("[resenas/moderar] falta BLOB_READ_WRITE_TOKEN (Vercel → Storage → Blob)");
+    // Vercel Blob acepta dos credenciales: BLOB_STORE_ID (Vercel añade solo el token OIDC
+    // al ejecutarse) o, en local/antiguo, BLOB_READ_WRITE_TOKEN.
+    const hasBlob = Boolean(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN);
+    if (review.photoCount > 0 && !hasBlob) {
+      console.error("[resenas/moderar] falta BLOB_STORE_ID o BLOB_READ_WRITE_TOKEN (Vercel → Storage → Blob)");
       return { status: "error", message: copy.errors.unavailable };
     }
 

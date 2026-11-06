@@ -208,7 +208,7 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | 13 | La foto de la señora (`gallery/margherita-en-mano.webp`) se retiró de la web por petición del usuario: no volver a usarla | ✅ Hecho |
 | 14 | Intro del Inicio: telón que gotea al subir, rehecho en un solo canvas sin sombra (CurtainDrips.tsx → DripCurtain); el hero entra al 80 % de la subida. Comparar con Figma | ⏳ Pendiente |
 | 16 | Titular y responsable de datos: Lucas Luciano Mendez Mardones (NIF 54444120S, domicilio fiscal), 2026-11-03. Falta revisión por asesor | ✅ Hecho |
-| 18 | Moderación de reseñas por email (2026-11-06): falta en Vercel `REVIEW_SIGNING_SECRET` y crear Blob store (`BLOB_READ_WRITE_TOKEN`); probar una reseña real de punta a punta | ⏳ Usuario |
+| 18 | Moderación de reseñas por email (2026-11-06): `REVIEW_SIGNING_SECRET` y Blob store (`BLOB_STORE_ID`, auth OIDC) ya en Vercel. Falta: probar una reseña real de punta a punta | ⏳ Usuario |
 | 17 | Reservas por WhatsApp (2026-11-03): formulario → wa.me/34637672493 con el mensaje escrito; botones genéricos con el enlace corto. Falta el QR que enviará el usuario | ⏳ Usuario |
 
 Hecho: `/design/*.md`, fotos reales, logo SVG, tipografía (League Spartan Black),
