@@ -1,7 +1,7 @@
 import "server-only";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import type { ServerEnv } from "@/lib/server/env";
+import { redis } from "@/lib/server/redis";
 
 let limiter: Ratelimit | undefined;
 
@@ -11,7 +11,7 @@ let limiter: Ratelimit | undefined;
  */
 export async function isRateLimited(key: string, env: ServerEnv): Promise<boolean> {
   limiter ??= new Ratelimit({
-    redis: new Redis({ url: env.UPSTASH_REDIS_REST_URL, token: env.UPSTASH_REDIS_REST_TOKEN }),
+    redis: redis(env),
     limiter: Ratelimit.slidingWindow(5, "10 m"),
     prefix: "luca:form",
   });

@@ -32,6 +32,9 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     formats: ["image/webp", "image/avif"],
+    // Fotos de las reseñas publicadas (Vercel Blob). Next las optimiza en el servidor,
+    // así que el navegador las recibe desde 'self' y la CSP no cambia.
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
   },
   // Foodtrucks se convirtió en Reseñas: los enlaces antiguos llegan a la página nueva.
   // Temporal (307) por si Foodtrucks vuelve más adelante.

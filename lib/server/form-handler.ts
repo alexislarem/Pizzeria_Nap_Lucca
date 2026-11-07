@@ -1,27 +1,26 @@
 import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import type { z } from "zod";
-import { serverEnv } from "@/lib/server/env";
+import { serverEnv, type ServerEnv } from "@/lib/server/env";
 import { isRateLimited } from "@/lib/server/rate-limit";
 import { verifyTurnstile } from "@/lib/server/turnstile";
-import { sendFormEmail, type EmailAttachment, type EmailRow } from "@/lib/server/email";
 import type { FormResponse } from "@/lib/forms/submit";
 
 type Base = { website?: string; turnstileToken: string };
 
-type FormHandlerOptions<S extends z.ZodType<Base>> = {
+type FormHandlerOptions<S extends z.ZodType<Base>, E extends ServerEnv> = {
   /** Nombre corto para el límite de envíos ("contacto", "resenas"). */
   key: string;
   schema: S;
   /** Tamaño máximo del cuerpo. Por defecto 10 KB (solo texto); más si lleva fotos. */
   maxBodyBytes?: number;
-  /** Convierte los datos ya validados en el email que recibe el restaurante. */
-  toEmail: (data: z.output<S>) => {
-    subject: string;
-    rows: EmailRow[];
-    replyTo: string;
-    attachments?: EmailAttachment[];
-  };
+  /** Lee las variables de entorno que necesita esta API. Por defecto, serverEnv. */
+  getEnv?: () => E;
+  /**
+   * Qué hacer con los datos ya validados y comprobados (enviar el email, guardar la reseña…).
+   * Si lanza un error, el visitante ve "No hemos podido enviarlo".
+   */
+  handle: (data: z.output<S>, env: E) => Promise<void>;
 };
 
 const MAX_BODY_BYTES = 10_000;
@@ -30,18 +29,19 @@ const reply = (body: FormResponse, status = 200) => NextResponse.json(body, { st
 
 /**
  * Crea el POST de una API de formulario. Orden de las comprobaciones (de la más barata a la más cara):
- * tamaño → límite de envíos (Upstash) → Zod → honeypot → Turnstile → envío con Resend.
+ * tamaño → límite de envíos (Upstash) → Zod → honeypot → Turnstile → `handle` (email, guardado…).
  */
-export function createFormHandler<S extends z.ZodType<Base>>({
+export function createFormHandler<S extends z.ZodType<Base>, E extends ServerEnv = ServerEnv>({
   key,
   schema,
   maxBodyBytes = MAX_BODY_BYTES,
-  toEmail,
-}: FormHandlerOptions<S>) {
+  getEnv = serverEnv as () => E,
+  handle,
+}: FormHandlerOptions<S, E>) {
   return async function POST(req: NextRequest) {
-    let env;
+    let env: E;
     try {
-      env = serverEnv();
+      env = getEnv();
     } catch (err) {
       console.error(`[api/${key}]`, err);
       return reply({ ok: false, error: "El formulario no está disponible ahora mismo. Llámanos, por favor." }, 503);
@@ -89,9 +89,9 @@ export function createFormHandler<S extends z.ZodType<Base>>({
     }
 
     try {
-      await sendFormEmail(env, toEmail(data));
+      await handle(data, env);
     } catch (err) {
-      console.error(`[api/${key}] email`, err);
+      console.error(`[api/${key}] handle`, err);
       return reply({ ok: false, error: "No hemos podido enviarlo. Inténtalo de nuevo o llámanos." }, 502);
     }
 

@@ -111,7 +111,7 @@ export const privacidad: LegalDoc = {
     {
       title: "Quién más los trata (encargados)",
       paragraphs: [
-        "Para que la web funcione usamos proveedores que tratan datos solo siguiendo nuestras instrucciones: Vercel (alojamiento), Resend (envío de los formularios de contacto y reseñas a nuestro email), Cloudflare Turnstile (protección contra robots) y Upstash (límite de envíos, que guarda la IP de forma temporal). Algunos están en Estados Unidos y se acogen a las garantías del Marco de Privacidad de Datos UE-EE. UU. o a cláusulas contractuales tipo.",
+        "Para que la web funcione usamos proveedores que tratan datos solo siguiendo nuestras instrucciones: Vercel (alojamiento), Resend (envío de los emails de contacto y reseñas), Cloudflare Turnstile (protección contra robots), Upstash (límite de envíos, que guarda la IP de forma temporal, y almacén de las reseñas: las pendientes de revisar se borran solas a los 30 días) y Vercel Blob (fotos de las reseñas publicadas). Algunos están en Estados Unidos y se acogen a las garantías del Marco de Privacidad de Datos UE-EE. UU. o a cláusulas contractuales tipo.",
         "Las reservas y los mensajes por WhatsApp viajan por el servicio de WhatsApp (WhatsApp Ireland Limited, grupo Meta), que tiene su propia política de privacidad (whatsapp.com/legal). Usarlo es opcional: también puedes reservar por teléfono.",
         "No cedemos tus datos a terceros salvo obligación legal.",
       ],

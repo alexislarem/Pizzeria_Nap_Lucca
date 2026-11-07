@@ -4,11 +4,13 @@
  * Para añadir una: copiarla allí y aquí, con el mismo formato.
  */
 import type { DoodleName } from "@/content/doodles";
+import type { Photo } from "@/content/home";
 import { pages } from "@/content/pages";
 import { instagramHandle, mapsHref } from "@/lib/utils/contact";
 import { siteConfig } from "@/site.config";
 
-export type ReviewSource = "google" | "instagram";
+/** google/instagram = copiadas a mano aquí; web = enviadas con el formulario y aprobadas por email. */
+export type ReviewSource = "google" | "instagram" | "web";
 
 export type Review = {
   id: string;
@@ -23,6 +25,8 @@ export type Review = {
   reply?: string;
   /** "Me gusta" de partida en la web. */
   likes: number;
+  /** Fotos del autor (solo reseñas de la web, alojadas en Vercel Blob). */
+  photos?: Photo[];
 };
 
 export const reviewSources: Record<
@@ -41,6 +45,12 @@ export const reviewSources: Record<
     tooltip: `Comentario en ${instagramHandle}`,
     href: siteConfig.social.instagram,
     cta: `Seguir a ${instagramHandle}`,
+  },
+  web: {
+    label: "Web de LUCA",
+    tooltip: "Reseña enviada desde esta web",
+    href: "#escribir",
+    cta: "Escribir una reseña",
   },
 };
 
@@ -175,7 +185,45 @@ export const resenaForm = {
   sending: "Enviando…",
   success: {
     title: "¡Grazie mille!",
-    text: "Hemos recibido tu reseña. La leeremos y la publicaremos muy pronto.",
+    text: "Hemos recibido tu reseña. La leeremos con calma y, cuando esté publicada, te avisaremos por email.",
     again: "Escribir otra reseña",
+  },
+} as const;
+
+/**
+ * Página privada /resenas/moderar: se abre desde los botones del email "Reseña por revisar".
+ * Solo funciona con el enlace firmado del correo (no sale en el menú ni en Google).
+ */
+export const resenaModeracion = {
+  metaTitle: "Revisar reseña",
+  eyebrow: "Solo para LUCA",
+  title: "Revisar reseña",
+  intro: "Esto es lo que se publicará en la web: puntuación, nombre, texto y fotos. El email nunca se muestra.",
+  question: "¿La publicamos?",
+  publish: "Publicar reseña",
+  reject: "Rechazar y borrar",
+  working: "Un momento…",
+  alreadyPublished: "Esta reseña ya está publicada en la web.",
+  rejectHint: "Si la rechazas, se borra con sus fotos y no se avisa al autor.",
+  photosLabel: "Fotos",
+  emailLabel: "Email (privado)",
+  done: {
+    published: {
+      title: "¡Publicada!",
+      text: "Ya aparece en la barra de comandas de Reseñas y hemos enviado un email de agradecimiento a su autor.",
+      cta: "Ver en la web",
+    },
+    rejected: {
+      title: "Reseña rechazada",
+      text: "Se ha borrado junto con sus fotos. No se ha avisado al autor.",
+      cta: "Ir a Reseñas",
+    },
+  },
+  errors: {
+    badLink: "Este enlace no es válido o ha caducado (duran 30 días). Si la reseña era reciente, busca el email más nuevo.",
+    gone: "Esta reseña ya no existe: se rechazó antes o caducó a los 30 días.",
+    busy: "Esta reseña se está procesando ahora mismo. Espera unos segundos y recarga la página.",
+    unavailable: "La revisión de reseñas no está disponible ahora mismo (faltan claves del servidor). Avisa a quien mantiene la web.",
+    generic: "Algo ha fallado. Inténtalo otra vez en un minuto.",
   },
 } as const;
