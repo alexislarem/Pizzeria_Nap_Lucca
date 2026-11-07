@@ -193,7 +193,7 @@ Contacto; Carta con tickets interactivos. Siguiente: reseñas reales (design/res
 | # | Pendiente | Estado |
 |---|-----------|--------|
 | 1 | Claves reales en Vercel (8 variables, prod + preview), 2026-11-02. Falta: probar una reserva real en producción | ✅ Hecho |
-| 2 | Dominio lucapizzerianapoletana.es en Vercel (DNS de Vercel) + registros DNS de Resend y DMARC. Falta: pulsar Verify en Resend | ⏳ Usuario |
+| 2 | Dominio lucapizzerianapoletana.es en Vercel (DNS de Vercel) + registros DNS de Resend y DMARC. Verificado en Resend | ✅ Hecho |
 | 3 | Horarios (site.config → hours) y validación de reservas por día/hora | ✅ Hecho |
 | 4 | Reseñas: 7 reales de Google cargadas (`design/resenas.md`). Faltan: estrellas de B.I.N, final del texto de Sonia, reseñas de Instagram y automatizar la publicación tras revisar por email | ⏳ Usuario |
 | 5 | Confirmar copy del Hero y textos marcados `TODO` en `content/*.ts` (Proceso, Obra, pies de foto, textos de formularios) | ⏳ Pendiente |
